@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>سباق مُحوِّلات الطاقة</title>
+<style>
+@font-face{font-family:Almarai;src:url(assets/fonts/almarai.ttf);font-weight:400}
+@font-face{font-family:Almarai;src:url(assets/fonts/almarai-bold.ttf);font-weight:700}
+:root{--hh:52px;--st:env(safe-area-inset-top,0px);--a:.66;--navy:#1f2a5c;--teal:#14967f;--amber:#f2a516;--rose:#e2557b;--violet:#7b5cd6}
+*{box-sizing:border-box;font-family:Almarai,sans-serif}
+html,body{margin:0;height:100%;overflow:hidden;color:var(--navy)}
+body{background:url(assets/img/park.jpg) center/cover no-repeat fixed}
+#track{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+.hud{position:fixed;top:calc(10px + var(--hh) + var(--st));left:10px;right:10px;display:flex;gap:8px;align-items:center;z-index:5;flex-wrap:wrap}
+.pill{background:rgba(255,255,255,var(--a));border-radius:22px;padding:8px 14px;font-weight:700;font-size:16px;box-shadow:0 4px 14px rgba(31,42,92,.2);display:flex;align-items:center;gap:6px}
+.pill a,.pill button{border:0;background:none;font-size:18px;cursor:pointer;text-decoration:none;color:inherit;padding:0}
+.spacer{flex:1}
+.box .tbadge{font-size:14px;padding:5px 14px 5px 8px}.box .tbadge img{height:46px}.box .tbadge b{font-size:19px}
+.tbadge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.92);color:#1f2a5c;border-radius:14px;padding:3px 10px 3px 6px;flex:none;line-height:1.25;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,.15)}.tbadge img{height:30px}.tbadge b{font-size:13px}
+.timer{position:relative;width:54px;height:54px}
+.timer svg{transform:rotate(-90deg)}
+.timer b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px}
+.qcard{position:fixed;top:calc(80px + var(--st));max-height:calc(100dvh - 90px - var(--st));overflow:auto;left:50%;transform:translateX(-50%);width:min(760px,94vw);background:rgba(255,255,255,var(--a));border-radius:26px;padding:20px 22px;box-shadow:0 14px 40px rgba(31,42,92,.28);z-index:4;border:3px solid rgba(255,255,255,.7)}
+.collage{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:8px 0}.collage img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.qimg{height:150px;border-radius:18px;background-size:cover;background-position:center 35%;margin:-6px -6px 10px;position:relative;border:3px solid #fff;box-shadow:0 4px 12px rgba(31,42,92,.15)}.qimg .qnum{position:absolute;top:10px;right:10px}
+.qnum{display:inline-block;background:var(--violet);color:#fff;border-radius:14px;padding:4px 12px;font-size:13px;font-weight:700}
+.qtext{font-size:clamp(18px,2.4vw,24px);font-weight:700;line-height:1.7;margin:10px 0 14px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{border:3px solid rgba(219,228,245,.9);background:rgba(255,255,255,calc(var(--a) - .05));border-radius:18px;padding:13px 14px;font-size:clamp(15px,1.9vw,19px);font-weight:700;color:var(--navy);cursor:pointer;text-align:right;transition:transform .15s,background .2s;display:flex;gap:10px;align-items:center}
+.opt:hover{transform:translateY(-3px);border-color:var(--amber)}
+.opt .k{flex:none;width:32px;height:32px;border-radius:50%;background:rgba(238,242,251,.8);display:flex;align-items:center;justify-content:center}
+.opt.ok{background:#d9f5ea;border-color:var(--teal)}.opt.no{background:#ffe1e8;border-color:var(--rose);animation:shake .4s}
+.opt[disabled]{cursor:default}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{display:none;margin-top:12px;border-radius:16px;padding:12px 14px;font-size:16px;line-height:1.8}
+.fb.show{display:block}.fb.good{background:rgba(230,247,241,.85);color:#0b6b59}.fb.bad{background:rgba(255,240,243,.85);color:#9c2448}
+.next{margin-top:10px;border:0;background:var(--navy);color:#fff;border-radius:14px;padding:11px 22px;font-size:17px;font-weight:700;cursor:pointer}
+.screen{position:fixed;inset:0;display:flex;z-index:10;background:rgba(31,42,92,.25);overflow:auto;padding:calc(12px + var(--hh) + var(--st)) 10px 12px}
+.box{margin:auto;background:rgba(255,255,255,calc(var(--a) + .12));border-radius:30px;padding:26px 30px;width:min(640px,94vw);text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3);position:relative}
+.box h1{margin:0 0 6px;font-size:clamp(24px,4vw,36px);color:var(--violet)}
+.box p{font-size:17px;line-height:1.9;margin:6px 0}
+.box .rules{text-align:right;background:rgba(244,241,255,.7);border-radius:18px;padding:10px 16px;font-size:15.5px;line-height:2}
+.big{border:0;background:linear-gradient(135deg,#f2a516,#e2557b);color:#fff;font-size:22px;font-weight:700;border-radius:20px;padding:14px 34px;cursor:pointer;margin-top:14px;box-shadow:0 8px 20px rgba(226,85,123,.4)}
+.guideImg{position:fixed;bottom:0;right:1%;height:46vh;z-index:3;pointer-events:none;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25))}
+.say{position:fixed;right:3%;bottom:44vh;background:rgba(255,255,255,.8);border-radius:18px;padding:10px 14px;font-weight:700;font-size:15px;max-width:240px;z-index:3;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.say:after{content:'';position:absolute;bottom:-10px;right:30px;border:10px solid transparent;border-top-color:#fff;border-bottom:0}
+.stars{font-size:52px;letter-spacing:6px;margin:8px 0}
+.confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:20;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.hidden{display:none!important}
+@media (max-height:520px){.qimg{height:64px;margin-bottom:6px}.qtext{font-size:17px;margin:4px 0 8px}.opt{padding:8px 10px;font-size:15px}.qcard{padding:10px 14px}.say{display:none}.box{padding:14px 18px}.collage{grid-template-columns:repeat(6,1fr)}}
+@media (max-width:700px){.hud .tbadge span{display:none}.qimg{height:90px}.collage{grid-template-columns:repeat(3,1fr)}.opts{grid-template-columns:1fr}.guideImg{height:28vh}.say{display:none}.qcard{top:112px;padding:14px}.pill{padding:6px 10px;font-size:14px}}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:60;height:calc(var(--hh) + var(--st));padding:var(--st) 14px 0;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.96);border-bottom:3px solid #3fa98a;color:#1f2a5c;font-size:13px;line-height:1.45;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.hdr img{height:calc(var(--hh) - 10px)}.hdr .hl{text-align:left}.hdr b{color:#14967f}
+@media (max-width:600px){.hdr{font-size:10.5px;padding-left:8px;padding-right:8px}}
+</style>
+</head>
+<body>
+<header class="hdr"><div class="hr">المملكة العربية السعودية<br>وزارة التعليم</div><img src="assets/img/moe.png" alt="وزارة التعليم"><div class="hl">فيزياء 2 • الدرس <bdi dir="ltr">5-1</bdi><br>المعلمة: <b>أ. ريم الحربي</b></div></header>
+<canvas id="track"></canvas>
+<div class="say" id="say">اجمعي الطاقة وأوصلي العربة إلى القمة! 🎢</div>
+
+<div class="hud hidden" id="hud">
+  <div class="pill"><a href="index.html" title="الرئيسية">🏠</a></div>
+  <div class="pill" id="hearts">❤️❤️❤️</div>
+  <div class="pill">⭐ <span id="score">0</span></div>
+  <div class="pill">السؤال <span id="qi">1</span>/<span id="qn">10</span></div>
+  <div class="spacer"></div>
+  <div class="pill"><button id="snd" title="الصوت">🔊</button></div>
+  <div class="pill"><button id="fs" title="ملء الشاشة">⛶</button></div>
+  <div class="pill timer"><svg width="54" height="54"><circle cx="27" cy="27" r="23" fill="#fff" stroke="#e6ebf6" stroke-width="6"/><circle id="ring" cx="27" cy="27" r="23" fill="none" stroke="#14967f" stroke-width="6" stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="0"/></svg><b id="tleft">30</b></div>
+</div>
+
+<div class="qcard hidden" id="qcard">
+  <div class="qimg" id="qimg"><span class="qnum" id="qtag"></span></div>
+  <div class="qtext" id="qtext"></div>
+  <div class="opts" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next hidden" id="next">التالي ⟵</button>
+</div>
+
+<div class="screen" id="start">
+  <div class="box">
+    
+    <h1>سباق مُحوِّلات الطاقة</h1><div class="collage"><img src="assets/img/archery.jpg"><img src="assets/img/cart.jpg"><img src="assets/img/spring.jpg"><img src="assets/img/library.jpg"><img src="assets/img/pendulum.jpg"><img src="assets/img/wheel.jpg"></div>
+    <p>درس الأشكال المتعددة للطاقة • فيزياء 2</p>
+    <div class="rules">
+      ✅ كل إجابة صحيحة تبذل <b>شغلًا</b> يرفع العربة إلى القمة التالية.<br>
+      ⏱ لكل سؤال <b>30 ثانية</b>، والإجابة السريعة تمنحك نقاطًا إضافية.<br>
+      ❤️ لديكِ <b>3 قلوب</b>؛ الخطأ أو انتهاء الوقت يُفقدك قلبًا.<br>
+      🏁 أوصلي العربة إلى <b>القمة الأخيرة</b> بعشرة أسئلة!
+    </div>
+    <button class="big" id="go">ابدئي اللعب ▶</button>
+  </div>
+</div>
+
+<div class="screen hidden" id="end">
+  <div class="box">
+    <h1 id="endTitle"></h1>
+    <div class="stars" id="stars"></div>
+    <p id="endMsg"></p>
+    <button class="big" id="again">العبي مرة أخرى ↺</button>
+    <p><a href="index.html" style="color:#7b5cd6;font-weight:700">العودة للرئيسية</a></p>
+  </div>
+</div>
+
+<script>
+const BANK=[
+{img:'hall',q:'وحدة قياس الطاقة في النظام الدولي هي:',o:['الجول J','النيوتن N','الواط W','kg·m/s'],e:'الطاقة والشغل يُقاسان بالجول J.'},
+{img:'cart',q:'إذا تضاعفت سرعة جسم مع ثبات كتلته فإن طاقته الحركية:',o:['تصبح 4 أضعاف','تتضاعف مرتين','تقل للنصف','لا تتغير'],e:'KE = ½mv² تتناسب مع v²، و2² = 4.'},
+{img:'bowling',q:'طاقة وضع كرة 2.0 kg على ارتفاع 3.0 m (g = 9.80 m/s²):',o:['58.8 J','29.4 J','6.0 J','117.6 J'],e:'PE = mgh = (2.0)(9.80)(3.0) = 58.8 J'},
+{img:'archery',q:'الطاقة المختزنة في وتر قوس مشدود هي طاقة:',o:['وضع مرونية','حركية','وضع جاذبية','سكونية فقط'],e:'الوتر المشدود يختزن طاقة وضع مرونية.'},
+{img:'bowling',q:'جسم 2.0 kg أسفل مستوى الإسناد بـ 3.0 m. طاقة وضعه:',o:['−58.8 J','+58.8 J','صفر','−6.0 J'],e:'h = −3.0 m ⟸ PE = (2.0)(9.80)(−3.0) = −58.8 J'},
+{img:'ramp',q:'عند أقصى ارتفاع لكرة مقذوفة رأسيًّا لأعلى تكون طاقتها الحركية:',o:['صفرًا','أكبر ما يمكن','سالبة','تساوي 2mgh'],e:'السرعة عند أقصى ارتفاع صفر، فتكون KE = 0.'},
+{img:'bowling',q:'ما الذي لا يتغير عند تغيير مستوى الإسناد؟',o:['التغير في طاقة الوضع ΔPE','قيمة طاقة الوضع PE','الارتفاع h','إشارة PE'],e:'قيمة PE تتغير، أما ΔPE فيبقى كما هو.'},
+{img:'cart',q:'الشغل المبذول على جسم يساوي:',o:['التغير في طاقته الحركية','طاقته الحركية النهائية دائمًا','كتلته × سرعته','قدرته'],e:'نظرية الشغل – الطاقة: W = ΔKE'},
+{img:'ramp',q:'سقطت كرة 0.50 kg من ارتفاع 4.0 m إلى الأرض. التغير في طاقة وضعها:',o:['−19.6 J','+19.6 J','−2.0 J','صفر'],e:'ΔPE = −mgh = −(0.50)(9.80)(4.0) = −19.6 J'},
+{img:'cart',q:'سيارة طاقتها الحركية 100 kJ عند 10 m/s. كم تصبح عند 30 m/s؟',o:['900 kJ','300 kJ','600 kJ','1000 kJ'],e:'السرعة 3 أضعاف ⟸ الطاقة 3² = 9 أضعاف.'},
+{img:'wheel',q:'لعبة البلبل تدور حول مركزها دون أن تنتقل. لها طاقة:',o:['حركية دورانية','وضع مرونية','لا تملك طاقة','كيميائية فقط'],e:'الجسم الدوّار يملك طاقة حركية دورانية.'},
+{img:'hall',q:'الطاقة السكونية لجسم تُحسب بالعلاقة:',o:['E₀ = mc²','E₀ = mgh','E₀ = ½mv²','E₀ = Fd'],e:'قدّم أينشتاين العلاقة E₀ = mc².'},
+{img:'ramp',q:'لماذا لا ترتد الكرة إلى الارتفاع الذي سقطت منه؟',o:['يتحول جزء من طاقتها إلى حرارة وصوت','لأن الطاقة تفنى','لأن كتلتها تقل','لأن الجاذبية تزداد'],e:'الطاقة لا تفنى بل يتحول جزء منها إلى حرارة وصوت وتشوّه.'},
+{img:'library',q:'إذا ضاعفنا ارتفاع جسم وقلّلنا كتلته إلى النصف، فإن طاقة وضعه:',o:['تبقى كما هي','تتضاعف','تقل للنصف','تصبح 4 أضعاف'],e:'PE = mgh ⟸ (½m)(2h) = mgh.'},
+{img:'pendulum',q:'شغل الجاذبية على كرة ترتفع مسافة h:',o:['−mgh','+mgh','صفر','2mgh'],e:'قوة الجاذبية معاكسة للإزاحة؛ فالشغل سالب.'},
+{img:'spring',q:'في القفز بالزانة، عند انثناء الزانة تتحول الطاقة الحركية إلى:',o:['طاقة وضع مرونية','طاقة كيميائية','طاقة سكونية','طاقة صوتية فقط'],e:'الزانة المنثنية تختزن طاقة وضع مرونية.'},
+{img:'library',q:'كتاب 1.5 kg على رف 2.0 m، ومستوى الإسناد طاولة 0.80 m. طاقة وضعه:',o:['17.6 J','29.4 J','11.8 J','41.2 J'],e:'h = 2.0 − 0.80 = 1.2 m ⟸ PE = (1.5)(9.80)(1.2) = 17.6 J'},
+{img:'spring',q:'نابض : طاقة مرونية  ::',o:['بنزين : طاقة كيميائية','كرة : ملعب','قوس : سهم','جول : نيوتن'],e:'العلاقة: الشيء وشكل الطاقة المختزنة فيه.'}
+];
+const N=10,TIME=30;
+let qs=[],qi=0,hearts=3,score=0,timer=null,tleft=TIME,sound=true,locked=false;
+let cartT=0,cartTarget=0;
+const $=id=>document.getElementById(id);
+/* audio */
+let AC=null;function beep(f,d=0.15,type='sine',v=0.15){if(!sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(AC.destination);const t=AC.currentTime;g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d)}catch(e){}}
+function good(){[523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,.18,'triangle'),i*90))}
+function bad(){beep(220,.3,'sawtooth',.08);setTimeout(()=>beep(170,.35,'sawtooth',.08),140)}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+/* track canvas */
+const cv=$('track'),ctx=cv.getContext('2d');let W,H;
+let PORT=false;function resize(){W=innerWidth;H=innerHeight;PORT=H>W;const d=Math.min(2,devicePixelRatio||1);cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',()=>{resize();placeCard()});addEventListener('orientationchange',()=>setTimeout(()=>{resize();placeCard()},250));resize();
+// track: x from right(start) to left(finish) in RTL spirit; peaks increase
+function trackY(t){// t in [0,N]
+  const k0=PORT?0.55:1,base=H*0.96,amp=(H*0.04+H*0.013*t)*k0;const k=t%1;const hump=Math.sin(k*Math.PI);return base-amp*(0.2+0.8*hump)-H*0.007*t*k0}
+function trackX(t){return W*0.82-(t/N)*W*0.74}
+function drawTrack(){ctx.clearRect(0,0,W,H);
+ ctx.save();ctx.lineWidth=10;ctx.strokeStyle='rgba(123,92,214,.9)';ctx.beginPath();
+ for(let t=0;t<=N;t+=0.02){const x=trackX(t),y=trackY(t);t?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();
+ ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.stroke();
+ for(let t=0;t<=N;t+=0.25){const x=trackX(t),y=trackY(t);ctx.strokeStyle='rgba(123,92,214,.55)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y+5);ctx.lineTo(x,H);ctx.stroke()}
+ for(let i=1;i<=N;i++){const x=trackX(i-0.5),y=trackY(i-0.5);ctx.fillStyle=i<=cartTarget?'#f2a516':'#fff';ctx.beginPath();ctx.arc(x,y-22,11,0,7);ctx.fill();ctx.fillStyle='#1f2a5c';ctx.font='700 12px Almarai';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(i,x,y-22)}
+ ctx.font='26px serif';ctx.fillText('🏁',trackX(N)-6,trackY(N)-30);
+ // cart
+ const x=trackX(cartT),y=trackY(cartT),dx=trackX(cartT+0.01)-trackX(cartT-0.01),dy=trackY(cartT+0.01)-trackY(cartT-0.01),a=Math.atan2(dy,dx)+Math.PI;
+ ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.fillStyle='#e2557b';ctx.beginPath();ctx.roundRect?ctx.roundRect(-26,-30,52,24,8):ctx.rect(-26,-30,52,24);ctx.fill();
+ ctx.font='18px serif';ctx.fillText('😄',-10,-34);ctx.fillText('🤩',10,-34);ctx.fillStyle='#333';[-16,16].forEach(w=>{ctx.beginPath();ctx.arc(w,-5,6,0,7);ctx.fill()});ctx.restore();
+ // energy mini bars near cart
+ const hNorm=0.15+(H*0.95-y)/(H*0.3),k=cartT%1,speed=Math.abs(Math.cos(k*Math.PI));const pe=Math.min(1,hNorm),ke=moving?speed*0.8:0;
+ const bx=x-40,by=y-110;ctx.fillStyle='rgba(255,255,255,.9)';ctx.beginPath();ctx.roundRect?ctx.roundRect(bx,by,80,58,10):ctx.rect(bx,by,80,58);ctx.fill();
+ ctx.fillStyle='#14967f';ctx.fillRect(bx+14,by+44-pe*34,18,pe*34);ctx.fillStyle='#e2557b';ctx.fillRect(bx+48,by+44-ke*34,18,ke*34);
+ ctx.fillStyle='#1f2a5c';ctx.font='700 10px Almarai';ctx.fillText('PE',bx+23,by+52);ctx.fillText('KE',bx+57,by+52);
+ ctx.restore()}
+let moving=false;
+function anim(){if(Math.abs(cartTarget-cartT)>0.002){moving=true;cartT+=Math.sign(cartTarget-cartT)*Math.min(Math.abs(cartTarget-cartT),0.012+0.02*Math.abs(Math.cos((cartT%1)*Math.PI)))}else{moving=false;cartT=cartTarget}drawTrack();requestAnimationFrame(anim)}
+anim();
+/* game flow */
+function start(){qs=shuffle(BANK.slice()).slice(0,N).map(q=>({...q,ord:shuffle([0,1,2,3])}));qi=0;hearts=3;score=0;cartT=0;cartTarget=0;
+ $('start').classList.add('hidden');$('end').classList.add('hidden');$('hud').classList.remove('hidden');$('qcard').classList.remove('hidden');$('qn').textContent=N;show();beep(660,.1)}
+function show(){locked=false;const q=qs[qi];$('qi').textContent=qi+1;$('qtag').textContent='السؤال '+(qi+1);$('qtext').textContent=q.q;$('qimg').style.backgroundImage=`url(assets/img/${q.img}.jpg)`;
+ const L=['أ','ب','ج','د'];$('opts').innerHTML=q.ord.map((oi,i)=>`<button class="opt" data-i="${oi}"><span class="k">${L[i]}</span><span>${q.o[oi]}</span></button>`).join('');
+ document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(+b.dataset.i,b));
+ $('fb').className='fb';$('next').classList.add('hidden');$('hearts').textContent='❤️'.repeat(hearts)+'🤍'.repeat(3-hearts);$('score').textContent=score;
+ say(['فكّري جيدًا 🤔','تذكّري القوانين ✍️','أنتِ قادرة! 💪','ركّزي في الوحدات 📏'][qi%4]);
+ tleft=TIME;tick();placeCard();clearInterval(timer);timer=setInterval(()=>{tleft--;tick();if(tleft<=5&&tleft>0)beep(880,.05,'square',.05);if(tleft<=0){clearInterval(timer);answer(-1,null)}},1000)}
+function placeCard(){const h=document.getElementById('hud').getBoundingClientRect(),c=document.getElementById('qcard');const top=(h.height?h.bottom:60)+10;c.style.top=top+'px';const trackTop=trackY(N-0.5)-40;c.style.maxHeight=Math.max(220,trackTop-top-8)+'px'}addEventListener('resize',placeCard);
+function tick(){$('tleft').textContent=tleft;$('ring').style.strokeDashoffset=144.5*(1-tleft/TIME);$('ring').style.stroke=tleft>10?'#14967f':'#e2557b'}
+function answer(i,btn){if(locked)return;locked=true;clearInterval(timer);const q=qs[qi];
+ document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(+b.dataset.i===0)b.classList.add('ok')});
+ const fb=$('fb');
+ if(i===0){const pts=10+Math.round(tleft/3);score+=pts;good();cartTarget=qi+1;fb.className='fb show good';fb.innerHTML=`<b>✓ إجابة صحيحة! +${pts}</b><br>${q.e}`;say('رائع! بذلتِ شغلًا فارتفعت العربة 🎉');burst(14)}
+ else{if(btn)btn.classList.add('no');hearts--;bad();fb.className='fb show bad';fb.innerHTML=`<b>${i<0?'⏰ انتهى الوقت!':'✗ إجابة غير صحيحة'}</b><br>${q.e}`;say('لا بأس، نتعلم من الخطأ 🌱')}
+ $('hearts').textContent='❤️'.repeat(Math.max(0,hearts))+'🤍'.repeat(3-Math.max(0,hearts));$('score').textContent=score;
+ const n=$('next');n.classList.remove('hidden');n.textContent=(hearts<=0||qi===N-1)?'عرض النتيجة 🏁':'التالي ⟵'}
+$('next').onclick=()=>{if(hearts<=0||qi===N-1)return finish();qi++;show()};
+function finish(){$('qcard').classList.add('hidden');const correct=cartTarget,st=correct>=9?3:correct>=6?2:correct>=3?1:0;
+ $('endTitle').textContent=hearts<=0&&qi<N-1?'انتهت القلوب 💔':'وصلتِ إلى النهاية! 🏁';
+ $('stars').textContent='⭐'.repeat(st)+'☆'.repeat(3-st);
+ $('endMsg').innerHTML=`أجبتِ إجابة صحيحة عن <b>${correct}</b> من ${N} أسئلة، ومجموع نقاطك <b>${score}</b>.<br>${st===3?'أداء مذهل! أنتِ فيزيائية حقيقية 👑':st===2?'أحسنتِ! خطوة واحدة نحو التميز 🌟':'راجعي القوانين وحاولي مرة أخرى 💪'}`;
+ $('end').classList.remove('hidden');if(st>=2){burst(80);[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.25,'triangle'),i*140))}}
+function say(t){$('say').textContent=t}
+function burst(n){const cols=['#f2a516','#e2557b','#7b5cd6','#14967f','#2f7fd8'];for(let i=0;i<n;i++){const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=cols[i%5];c.style.animationDuration=(1.6+Math.random()*1.8)+'s';c.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}}
+$('go').onclick=()=>{start();fsOn()};$('again').onclick=start;
+$('snd').onclick=()=>{sound=!sound;$('snd').textContent=sound?'🔊':'🔇'};
+function fsOn(){const d=document.documentElement;if(!document.fullscreenElement&&d.requestFullscreen)d.requestFullscreen().catch(()=>{})}
+$('fs').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else fsOn()};
+</script>
+</body>
+</html>

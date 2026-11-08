@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مُحوِّلات الطاقة | الأشكال المتعددة للطاقة</title>
+<style>
+@font-face{font-family:Majalla;src:url(assets/fonts/majalla.ttf)}
+:root{--a:.86;--navy:#1f2a5c;--teal:#14967f;--amber:#f2a516;--rose:#e2557b;--violet:#7b5cd6}
+*{box-sizing:border-box;font-family:Majalla,'Sakkal Majalla',serif}
+html,body{margin:0;min-height:100%;color:var(--navy)}
+body:before{content:'';position:fixed;inset:0;background:url(assets/img/hall.jpg) center/cover;z-index:-1}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 18px 30px;position:relative}
+.head{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,var(--a));border-radius:26px;padding:12px 20px;box-shadow:0 8px 26px rgba(31,42,92,.18)}
+.head img{height:70px}
+.head h1{margin:0;font-size:clamp(32px,5vw,54px);color:var(--violet);line-height:1.1}
+.head p{margin:2px 0 0;font-size:24px}
+.head .sp{flex:1}
+.ctl{display:flex;gap:8px;align-items:center;font-size:20px;flex-wrap:wrap}
+.ctl input{accent-color:var(--violet);width:100px}
+.ctl button{border:0;background:var(--navy);color:#fff;border-radius:14px;padding:6px 14px;font-size:20px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}
+.card{display:block;text-decoration:none;color:inherit;background:rgba(255,255,255,var(--a));border-radius:24px;overflow:hidden;box-shadow:0 8px 26px rgba(31,42,92,.18);transition:transform .2s}
+.card:hover{transform:translateY(-6px)}
+.card .im{height:150px;background-size:cover;background-position:center 30%;position:relative}
+.card .im span{position:absolute;bottom:-26px;right:16px;width:56px;height:56px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.card .b{padding:30px 16px 16px}
+.card h2{margin:0;font-size:32px}
+.card p{margin:4px 0 0;font-size:21px;line-height:1.5}
+.card .go{display:inline-block;margin-top:8px;background:var(--teal);color:#fff;border-radius:12px;padding:3px 14px;font-size:20px}
+.row{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:18px;align-items:end}
+.panel{background:rgba(255,255,255,var(--a));border-radius:24px;padding:16px 20px;box-shadow:0 8px 26px rgba(31,42,92,.18)}
+.panel h3{margin:0 0 6px;font-size:30px;color:var(--teal)}
+.verse{background:rgba(246,242,230,.95);border-radius:18px;padding:10px 14px;margin:8px 0;text-align:center;font-size:clamp(26px,3vw,34px);line-height:1.8;color:#3a2b06;display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
+.verse small{font-size:20px;color:#8a6d2b}
+.play{border:0;background:var(--teal);color:#fff;border-radius:50%;width:48px;height:48px;font-size:22px;cursor:pointer;flex:none}
+.play.on{background:var(--rose)}
+.qa{margin-top:6px;font-size:23px}
+.qa .ans{display:none;background:#e6f6f1;color:#0b6b59;border-radius:12px;padding:8px 12px;margin-top:6px}
+.qa.open .ans{display:block}.qa.open .rev{display:none}
+.rev{border:0;background:var(--violet);color:#fff;border-radius:12px;padding:4px 14px;font-size:21px;cursor:pointer}
+.laws{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.laws div{border-radius:14px;padding:8px;text-align:center;color:#fff;font-size:26px;direction:ltr}
+.guide{display:flex;align-items:flex-end;gap:6px}
+.guide img{height:330px;flex:none;filter:drop-shadow(0 8px 14px rgba(0,0,0,.2))}
+.bub{background:#fff;border-radius:20px;padding:12px 16px;font-size:23px;line-height:1.6;box-shadow:0 6px 18px rgba(0,0,0,.15);margin-bottom:150px;position:relative}
+.bub:after{content:'';position:absolute;left:-10px;bottom:24px;border:10px solid transparent;border-right-color:#fff;border-left:0}
+@media (max-width:980px){.grid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.guide img{height:220px}.bub{margin-bottom:90px}}
+@media (max-width:560px){.grid{grid-template-columns:1fr}.head{flex-wrap:wrap}.head img{height:50px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="head">
+  <img src="assets/img/moe.png" alt="وزارة التعليم">
+  <div><h1>⚡ مُحوِّلات الطاقة</h1><p>الأشكال المتعددة للطاقة • فيزياء 2 • الصف الثاني الثانوي • الدرس 5-1 • <span style="white-space:nowrap">إعداد المعلمة: أ. ريم الحربي</span></p></div>
+  <span class="sp"></span>
+  <div class="ctl">الشفافية <input type="range" min="0.35" max="1" step="0.01" value="0.86" oninput="document.documentElement.style.setProperty('--a',this.value)"><button onclick="document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()">⛶ ملء الشاشة</button></div>
+ </div>
+
+ <div class="grid">
+  <a class="card" href="ar.html"><div class="im" style="background-image:url(assets/img/hall.jpg)"><span>📱</span></div><div class="b"><h2>عدسة مُحوِّلات الطاقة</h2><p>واقع معزز: مجسّمات الطاقة فوق الكاميرا مع أعمدة الطاقة وبيانات المعلمة.</p><span class="go">ادخلي ⟵</span></div></a>
+  <a class="card" href="lab.html"><div class="im" style="background-image:url(assets/img/ramp.jpg)"><span>🔬</span></div><div class="b"><h2>مختبر مُحوِّلات الطاقة</h2><p>عشر تجارب بشاشة كاملة، منها محاكاة طاقة الوضع، وكل تجربة مشروحة.</p><span class="go">ادخلي ⟵</span></div></a>
+  <a class="card" href="game.html"><div class="im" style="background-image:url(assets/img/park.jpg)"><span>🎢</span></div><div class="b"><h2>سباق مُحوِّلات الطاقة</h2><p>أسئلة مصوّرة بمؤقت وقلوب؛ كل إجابة صحيحة ترفع العربة إلى القمة.</p><span class="go">العبي ⟵</span></div></a>
+  <a class="card" href="worksheets.html"><div class="im" style="background-image:url(assets/img/library.jpg)"><span>📄</span></div><div class="b"><h2>رحلة مُحوِّلات الطاقة الورقية</h2><p>أوراق عمل PDF: لعبة لوحية: لوحة وبطاقات أسئلة جاهزة للطباعة.</p><span class="go">اطبعي ⟵</span></div></a>
+ </div>
+
+ <div class="row">
+  <div class="panel">
+   <h3>📖 نعمة الطاقة… وإتقان الخلق</h3>
+   <div class="verse"><button class="play" data-src="https://everyayah.com/data/Alafasy_128kbps/036080.mp3">▶</button>﴿الَّذِي جَعَلَ لَكُم مِّنَ الشَّجَرِ الْأَخْضَرِ نَارًا فَإِذَا أَنتُم مِّنْهُ تُوقِدُونَ﴾ <small>[يس: 80]</small></div>
+   <div class="verse"><button class="play" data-src="https://everyayah.com/data/Alafasy_128kbps/054049.mp3">▶</button>﴿إِنَّا كُلَّ شَيْءٍ خَلَقْنَاهُ بِقَدَرٍ﴾ <small>[القمر: 49]</small></div>
+   <div style="font-size:19px;color:#7d8bb3;text-align:center">التلاوة بصوت الشيخ مشاري العفاسي (تحتاج اتصالًا بالإنترنت)</div>
+   <div class="qa"><b>ما الربط بدرسنا؟</b> <button class="rev" onclick="this.parentNode.classList.add('open')">▶ اضغطي لإظهار الإجابة</button>
+    <div class="ans">الشجر الأخضر يختزن طاقة الشمس طاقةً كيميائية تتحول عند الاحتراق إلى حرارة وضوء، وكل شيء خلقه الله بمقدار دقيق؛ فالطاقة تُحسب بقوانين ثابتة مثل KE = ½mv² و PE = mgh.</div></div>
+   <div class="laws"><div style="background:#e2557b">KE = ½mv²</div><div style="background:#14967f">PE = mgh</div><div style="background:#f2a516">W = ΔKE</div><div style="background:#7b5cd6">E₀ = mc²</div></div>
+  </div>
+  <div class="guide"><div class="bub">أهلًا بكِ في رحلة الطاقة! ⚡<br>اختاري: عدسة مُحوِّلات الطاقة، أو مختبر مُحوِّلات الطاقة، أو سباق الطاقة، أو رحلة مُحوِّلات الطاقة الورقية.</div><img src="assets/img/guide.png" alt=""></div>
+ </div>
+</div>
+<audio id="aud"></audio>
+<script>
+const a=document.getElementById('aud');
+document.querySelectorAll('.play').forEach(b=>b.onclick=()=>{
+ if(a.dataset.src===b.dataset.src&&!a.paused){a.pause();b.textContent='▶';b.classList.remove('on');return}
+ document.querySelectorAll('.play').forEach(x=>{x.textContent='▶';x.classList.remove('on')});
+ a.src=b.dataset.src;a.dataset.src=b.dataset.src;a.play().then(()=>{b.textContent='⏸';b.classList.add('on')}).catch(()=>alert('تحتاج التلاوة اتصالًا بالإنترنت'));
+ a.onended=()=>{b.textContent='▶';b.classList.remove('on')}});
+</script>
+</body>
+</html>

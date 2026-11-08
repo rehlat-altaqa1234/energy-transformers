@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مختبر مُحوِّلات الطاقة | الأشكال المتعددة للطاقة</title>
+<style>
+@font-face{font-family:Almarai;src:url(assets/fonts/almarai.ttf);font-weight:400}
+@font-face{font-family:Almarai;src:url(assets/fonts/almarai-bold.ttf);font-weight:700}
+:root{--hh:52px;--st:env(safe-area-inset-top,0px);--a:.62;--navy:#1f2a5c;--teal:#14967f;--amber:#f2a516;--rose:#e2557b;--sky:#2f7fd8;--violet:#7b5cd6}
+*{box-sizing:border-box;font-family:Almarai,sans-serif}
+html,body{margin:0;height:100%;overflow:hidden;background:#dfe7f5;color:var(--navy)}
+.top{position:fixed;top:calc(var(--hh) + var(--st));left:0;right:0;height:60px;display:flex;align-items:center;gap:8px;padding:0 10px;background:var(--navy);color:#fff;z-index:20}
+.top h1{font-size:17px;margin:0 4px;white-space:nowrap}
+.tbadge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.92);color:#1f2a5c;border-radius:14px;padding:3px 10px 3px 6px;flex:none;line-height:1.25;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,.15)}.tbadge img{height:30px}.tbadge b{font-size:13px}
+.tabs{flex:1;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px 2px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:flex;align-items:center;gap:6px;border:0;border-radius:22px;padding:4px 12px 4px 6px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.tab img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7)}.tab.on{background:var(--amber);color:var(--navy)}
+.ibtn{flex:none;border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:12px;height:40px;min-width:40px;padding:0 10px;font-size:15px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px;font-weight:700}
+.alpha{display:flex;align-items:center;gap:6px;font-size:12px;flex:none}
+.alpha input{width:80px;accent-color:var(--amber)}
+.stage{position:fixed;top:calc(60px + var(--hh) + var(--st));left:0;right:0;bottom:0;background-size:cover;background-position:center;transition:background-image .3s}
+.sim{position:absolute;left:1.2%;top:1.8%;bottom:1.8%;width:66%;display:flex;flex-direction:column;gap:8px}
+.card{background:rgba(255,255,255,var(--a));border-radius:18px;box-shadow:0 6px 22px rgba(31,42,92,.18)}
+.canvasCard{flex:1;min-height:0;position:relative;overflow:hidden}
+canvas{width:100%;height:100%;display:block;touch-action:none}
+.ctrl{padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.ctrl label{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
+.ctrl input[type=range]{width:130px;accent-color:var(--teal)}
+.ctrl .val{min-width:58px;display:inline-block;background:rgba(238,243,251,.7);border-radius:8px;padding:3px 6px;text-align:center;direction:ltr;font-size:13px}
+.btn{border:0;border-radius:12px;padding:9px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--teal);color:#fff}
+.btn.alt{background:var(--sky)}.btn.warn{background:var(--rose)}.btn.ghost{background:#e8eef9;color:var(--navy)}
+.btn.sel{background:var(--amber);color:var(--navy)}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg .btn{padding:7px 10px;font-size:13px}
+/* explanation drawer with guide */
+.explain{position:absolute;right:1.2%;bottom:1.8%;width:31%;max-height:72%;display:flex;flex-direction:column;padding:12px 14px 12px 14px;overflow:auto}
+.explain h2{margin:0 0 6px;font-size:18px;color:var(--teal)}
+.explain .bubble{background:rgba(255,255,255,calc(var(--a) + .12));border:2px solid #cfe0f5;border-radius:16px;padding:10px 12px;font-size:14.5px;line-height:1.9;position:relative}
+.explain ol{margin:6px 0;padding-inline-start:20px}
+.explain .row{display:flex;gap:8px;align-items:flex-end}
+.explain .guide{width:118px;flex:none;align-self:flex-end}
+.qa{margin-top:8px;background:rgba(255,247,227,calc(var(--a) + .12));border-radius:14px;padding:9px 11px;font-size:14.5px;line-height:1.8}
+.qa .ans{display:none;margin-top:6px;background:#e6f6f1;border-radius:10px;padding:7px 9px;color:#0c6b5a;font-weight:700}
+.qa.open .ans{display:block}
+.qa .reveal{margin-top:6px}
+.qa.open .reveal{display:none}
+.closeX{position:absolute;top:8px;left:10px;border:0;background:#e8eef9;border-radius:50%;width:30px;height:30px;cursor:pointer;font-weight:700;color:var(--navy)}
+.openEx{position:absolute;right:1.2%;bottom:1.8%;display:none}
+.badge{display:none;position:absolute;top:10px;right:12px;background:var(--navy);color:#fff;font-size:12px;padding:4px 10px;border-radius:12px;pointer-events:none}
+.hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#fff3c4;color:#6b4b00;font-size:12.5px;padding:5px 10px;border-radius:12px;pointer-events:none;font-weight:700}
+@media (max-width:900px),(orientation:portrait){
+ .canvasCard{flex:none;height:min(74dvh,640px)}
+ .sim{height:auto!important}
+ .stage{overflow:auto}
+ .sim{position:relative;left:auto;top:auto;bottom:auto;width:auto;margin:8px;height:calc(100dvh - 60px - var(--hh) - var(--st) - 16px)}
+ .explain{position:relative;right:auto;bottom:auto;width:auto;max-height:none;margin:8px}
+ .openEx{position:fixed;right:10px;bottom:10px}
+ .top h1{display:none}.tbadge span{display:none}.alpha span{display:none}
+}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:60;height:calc(var(--hh) + var(--st));padding:var(--st) 14px 0;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.96);border-bottom:3px solid #3fa98a;color:#1f2a5c;font-size:13px;line-height:1.45;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.hdr img{height:calc(var(--hh) - 10px)}.hdr .hl{text-align:left}.hdr b{color:#14967f}
+@media (max-width:600px){.hdr{font-size:10.5px;padding-left:8px;padding-right:8px}}
+</style>
+</head>
+<body>
+<header class="hdr"><div class="hr">المملكة العربية السعودية<br>وزارة التعليم</div><img src="assets/img/moe.png" alt="وزارة التعليم"><div class="hl">فيزياء 2 • الدرس <bdi dir="ltr">5-1</bdi><br>المعلمة: <b>أ. ريم الحربي</b></div></header>
+<div class="top">
+  <a class="ibtn" href="index.html" title="الرئيسية">🏠</a>
+  <h1>🔬 مختبر مُحوِّلات الطاقة</h1>
+  <div class="tabs" id="tabs"></div>
+  <div class="alpha"><span>الشفافية</span><input type="range" id="alpha" min="0.2" max="1" step="0.01" value="0.62"></div>
+  <button class="ibtn" id="fs" title="ملء الشاشة">⛶</button>
+</div>
+<div id="rot" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(31,42,92,.93);color:#fff;align-items:center;justify-content:center;text-align:center;font-size:20px;line-height:2;padding:20px"><div><div style="font-size:60px">📱↻</div>أديري الجهاز أفقيًّا لأفضل عرض للمختبر<br><button class="btn" style="margin-top:10px" onclick="this.closest('#rot').remove()">متابعة على أي حال</button></div></div>
+<div class="stage" id="stage">
+  <div class="sim">
+    <div class="card canvasCard"><canvas id="cv"></canvas><div class="badge" id="badge"></div><div class="hint" id="hint"></div></div>
+    <div class="card ctrl" id="ctrl"></div>
+  </div>
+  <div class="card explain" id="explain">
+    <button class="closeX" id="closeEx" title="إخفاء">✕</button>
+    <h2 id="exTitle"></h2>
+    <div class="row">
+      <div class="bubble" id="exBody"></div>
+      <img class="guide" src="assets/img/guide.png" alt="">
+    </div>
+    <div class="qa" id="qa"><b>🤔 سؤال: </b><span id="qText"></span>
+      <div><button class="btn alt reveal" onclick="this.closest('.qa').classList.add('open')">▶ اضغطي لإظهار الإجابة</button></div>
+      <div class="ans" id="aText"></div></div>
+  </div>
+  <button class="btn openEx" id="openEx">📘 شرح المحاكاة</button>
+</div>
+<script>
+const g=9.80;
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1,CW=0,CH=0,SW=0,BX=0,BY=0,BW=0,BH=0,PORT=false;
+function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,window.devicePixelRatio||1);CW=r.width;CH=r.height;cv.width=CW*DPR;cv.height=CH*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+ PORT=CH>CW*1.05;W=CW;
+ if(PORT){H=CH*0.62;SW=W;BX=8;BY=H+4;BW=W-16;BH=CH-H-10}else{H=CH;SW=W*0.6;BX=W*0.63;BY=10;BW=W*0.35;BH=H-20}}
+addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,250));new ResizeObserver(()=>resize()).observe(cv);
+const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function fmt(v,p=3){if(!isFinite(v))return '—';const a=Math.abs(v);if(a===0)return '0';if(a>=1e5||a<1e-2){let e=Math.floor(Math.log10(a));let m=v/Math.pow(10,e);if(Math.abs(m)>=9.995){m/=10;e++}return m.toFixed(2)+'×10'+String(e).split('').map(c=>SUP[c]).join('')}if(a>=100)return v.toFixed(0);if(a>=10)return v.toFixed(1);return v.toFixed(2)}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function txt(s,x,y,o={}){ctx.save();ctx.font=(o.b?'700 ':'400 ')+(o.s||14)+'px Almarai';ctx.fillStyle=o.c||'#1f2a5c';ctx.textAlign=o.a||'center';ctx.textBaseline=o.bl||'middle';ctx.direction=o.dir||'rtl';ctx.fillText(s,x,y);ctx.restore()}
+function ltr(s,x,y,o={}){txt(s,x,y,Object.assign({dir:'ltr'},o))}
+function line(x1,y1,x2,y2,c='#1f2a5c',w=2,d=null){ctx.save();ctx.strokeStyle=c;ctx.lineWidth=w;if(d)ctx.setLineDash(d);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
+function arrow(x1,y1,x2,y2,c,w=4){line(x1,y1,x2,y2,c,w);const a=Math.atan2(y2-y1,x2-x1);ctx.save();ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-12*Math.cos(a-.45),y2-12*Math.sin(a-.45));ctx.lineTo(x2-12*Math.cos(a+.45),y2-12*Math.sin(a+.45));ctx.fill();ctx.restore()}
+/* energy bar chart (supports negative values) */
+function bars(x,y,w,h,items,maxAbs,neg=false,title='مخطط أعمدة الطاقة'){
+  ctx.save();rr(x,y,w,h,14);ctx.fillStyle='rgba(255,255,255,'+Math.min(1,(+getComputedStyle(document.documentElement).getPropertyValue('--a')||.62)+.08)+')';ctx.fill();ctx.strokeStyle='#d6e1f2';ctx.stroke();
+  txt(title,x+w/2,y+16,{b:1,s:13});
+  const top=y+34,bot=y+h-40,zero=neg?(top+bot)/2:bot,span=neg?(bot-top)/2:(bot-top);
+  line(x+8,zero,x+w-8,zero,'#1f2a5c',2);
+  const n=items.length,bw=Math.min(46,(w-20)/n*0.62),gap=(w-16)/n;
+  items.forEach((it,i)=>{const cx=x+8+gap*(i+.5);const hh=Math.max(-1,Math.min(1,it.v/(maxAbs||1)))*span;
+    ctx.fillStyle=it.c;rr(cx-bw/2,hh>=0?zero-hh:zero,bw,Math.max(1,Math.abs(hh)),6);ctx.fill();
+    ltr(fmt(it.v)+' J',cx,hh>=0?zero-hh-10:zero-hh+12,{s:11,b:1,c:it.c});
+    txt(it.l,cx,y+h-22,{s:12,b:1});});
+  ctx.restore();}
+function panel(x,y,lines,w=230){const lh=22;ctx.save();rr(x,y,w,lines.length*lh+14,12);ctx.fillStyle='rgba(31,42,92,.9)';ctx.fill();
+  lines.forEach((s,i)=>ltr(s,x+w/2,y+18+i*lh,{c:i===0?'#ffd56b':'#fff',s:13,b:1}));ctx.restore()}
+function ball(x,y,r,c='#2f5fd0'){ctx.save();const gr=ctx.createRadialGradient(x-r*.35,y-r*.35,r*.2,x,y,r);gr.addColorStop(0,'#fff');gr.addColorStop(.25,c);gr.addColorStop(1,'#14215a');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.restore()}
+
+/* ---------- controls helpers ---------- */
+const ctrl=document.getElementById('ctrl');
+function slider(id,label,min,max,step,val,unit,fn){return `<label>${label}<input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" oninput="S.${fn}(+this.value);document.getElementById('${id}v').textContent=(+this.value)+' ${unit}'"><span class="val" id="${id}v">${val} ${unit}</span></label>`}
+function seg(name,opts,cur,fn){return `<div class="seg" data-seg="${name}">`+opts.map(o=>`<button class="btn ghost ${o[0]==cur?'sel':''}" onclick="segSel(this);S.${fn}('${o[0]}')">${o[1]}</button>`).join('')+'</div>'}
+function segSel(b){b.parentNode.querySelectorAll('.btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}
+let S=null;
+
+/* ======================= EXPERIMENTS ======================= */
+const EXPS={};
+
+/* 1) gravitational potential energy */
+EXPS.pe={tab:'⬆ طاقة الوضع',img:'bowling',title:'محاكاة طاقة الوضع الجاذبية PE = mgh',
+hint:'اسحبي الكرة لأعلى أو لأسفل • اسحبي الخط الأحمر لتغيير مستوى الإسناد',
+explain:`<b>فكرة المحاكاة:</b> عندما نرفع الكرة نبذل شغلًا يُختزن في نظام (الكرة + الأرض) طاقةَ وضع جاذبية.<ol><li>غيّري <b>الكتلة m</b> من المنزلق.</li><li>اسحبي الكرة إلى الكتف أو الرف وراقبي <b>h</b> و<b>PE</b>.</li><li>غيّري <b>مستوى الإسناد</b> (الخط الأحمر): تتغير قيمة PE، وقد تصبح <b>سالبة</b> تحت المستوى.</li><li>اضغطي «ثبّتي البداية» ثم حرّكي الكرة: <b>ΔPE لا يتغير</b> مهما غيّرتِ مستوى الإسناد.</li><li>اضغطي «أسقطي الكرة»: تتحول PE إلى KE.</li></ol>`,
+q:'كرة بولنج 7.30 kg على الكتف (1.12 m) ومستوى الإسناد عند الرف (2.00 m). ما طاقة وضعها؟',a:'h = 1.12 − 2.00 = −0.88 m ⟸ PE = (7.30)(9.80)(−0.88) = −63.0 J (سالبة لأنها أسفل مستوى الإسناد). جرّبيها في المحاكاة!',
+ctrl(){return slider('m','الكتلة m',0.5,10,0.1,7.3,'kg','setM')+`<span style="font-weight:700">مستوى الإسناد:</span>`+seg('ref',[['0','الأرض'],['0.61','السلة'],['1.12','الكتف'],['2','الرف']],'0','setRef')+
+`<button class="btn alt" onclick="S.setStart()">📍 ثبّتي البداية</button><button class="btn" onclick="S.drop()">⬇ أسقطي الكرة</button><button class="btn ghost" onclick="S.reset()">↺ إعادة</button>`},
+init(){this.m=7.3;this.y=1.12;this.ref=0;this.start=null;this.v=0;this.fall=false;this.impact=null;this.drag=null},
+scene(G){const {sw,s,X,py}=G;
+ ctx.fillStyle='#8b6d4c';rr(X+60,py(0.61),90,0.61*s,8);ctx.fill();txt('السلة 0.610 m',X+105,py(0.61)-12,{s:12,b:1});
+ ctx.fillStyle='#a77b4f';ctx.fillRect(X-150,py(2.0),120,10);txt('الرف 2.00 m',X-90,py(2.0)-12,{s:12,b:1});
+ line(60,py(1.12),sw-10,py(1.12),'#9aa6c7',1,[4,5]);txt('الكتف 1.12 m',sw-40,py(1.12)-10,{s:11});},
+obj(x,y,r){ball(x,y,r)},
+setM(v){this.m=v},setRef(v){this.ref=+v},setStart(){this.start=this.y},drop(){this.fall=true;this.v=0;this.impact=null},reset(){this.init()},
+geo(){const sw=SW,gy=H-44,s=(H-90)/2.6;return{sw,gy,s,X:sw*0.42,py:h=>gy-h*s}},
+step(dt){if(this.fall){this.v+=g*dt;this.y-=this.v*dt;if(this.y<=0){this.y=0;this.impact=0.5*this.m*this.v*this.v;this.fall=false;this.v=0}}},
+draw(){const G=this.geo(),{sw,gy,s,X,py}=G;
+ // scale
+ line(40,py(0),40,py(2.5),'#7d8bb3',2);for(let h=0;h<=2.5;h+=0.5){line(34,py(h),46,py(h),'#7d8bb3',2);ltr(h.toFixed(1)+' m',22,py(h),{s:11})}
+ // floor
+ ctx.fillStyle='#c79a6a';ctx.fillRect(50,gy,sw-50,10);txt('سطح الأرض',sw-50,gy+20,{s:12,b:1});
+ this.scene(G);
+ // reference line
+ const ry=py(this.ref);line(50,ry,sw,ry,'#e2364f',3,[10,6]);ctx.save();rr(54,ry-24,128,20,8);ctx.fillStyle='#e2364f';ctx.fill();ctx.restore();txt('مستوى الإسناد h = 0',118,ry-14,{c:'#fff',s:11,b:1});
+ // start marker
+ if(this.start!==null){const sy=py(this.start);line(X-40,sy,X+40,sy,'#7b5cd6',2,[3,3]);txt('البداية',X-62,sy,{s:11,c:'#7b5cd6',b:1})}
+ // height arrow
+ const r=Math.max(12,0.11*s),by=py(this.y)-r;const h=this.y-this.ref;
+ if(Math.abs(h)>0.01){arrow(X-r-22,ry,X-r-22,py(this.y),'#14967f',3);ltr('h = '+h.toFixed(2)+' m',X-r-70,(ry+py(this.y))/2,{s:13,b:1,c:'#14967f'})}
+ this.obj(X,by,r);
+ const PE=this.m*g*h,KE=0.5*this.m*this.v*this.v;
+ const lines=['PE = m g h',`= (${this.m.toFixed(2)})(9.80)(${h.toFixed(2)})`,`= ${fmt(PE)} J`];
+ if(this.start!==null){const d=this.m*g*(this.y-this.start);lines.push(`ΔPE = ${fmt(d)} J`,`Wg = −ΔPE = ${fmt(-d)} J`)}
+ if(this.impact!==null)lines.push(`KE قبل الارتطام = ${fmt(this.impact)} J`);
+ panel(sw*0.58,12,lines,Math.min(250,sw*0.42));
+ bars(BX,BY,BW,BH,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'},{l:'المجموع',v:PE+KE,c:'#7b5cd6'}],this.m*g*2.6,true);
+},
+down(x,y){const G=this.geo(),r=Math.max(12,0.11*G.s),by=G.py(this.y)-r;if(Math.hypot(x-G.X,y-by)<r+24){this.drag='b';this.fall=false;this.v=0;this.impact=null}else if(Math.abs(y-G.py(this.ref))<18&&x<G.sw)this.drag='r'},
+move(x,y){const G=this.geo();const hm=(G.gy-y)/G.s;if(this.drag==='b')this.y=Math.max(0,Math.min(2.4,hm-0.11));if(this.drag==='r'){this.ref=Math.round(Math.max(0,Math.min(2.5,hm))*100)/100;document.querySelectorAll('[data-seg=ref] .btn').forEach(b=>b.classList.remove('sel'))}},
+up(){this.drag=null}};
+
+/* 1b) book on library shelf (inherits PE engine) */
+EXPS.book=Object.assign({},EXPS.pe,{tab:'📚 كتاب على الرف',img:'library',title:'كتاب على رف المكتبة: PE = mgh',
+hint:'اسحبي الكتاب إلى الرف • غيّري مستوى الإسناد • ثم أسقطيه',
+explain:`<b>فكرة المحاكاة:</b> ترفع الطالبة كتابًا كتلته 1.2 kg من الأرض إلى رف ارتفاعه 1.80 m، فيُختزن شغلها طاقةَ وضع.<ol><li>اسحبي <b>الكتاب</b> إلى الرف وراقبي PE.</li><li>غيّري <b>مستوى الإسناد</b> إلى الطاولة (0.75 m): تقل PE إلى 12.3 J.</li><li>ثبّتي البداية عند الأرض ثم ارفعي الكتاب: ΔPE = شغلكِ = 21.2 J.</li><li>اضغطي «أسقطي»: تتحول PE إلى KE وتُحسب السرعة.</li></ol>`,
+q:'ما سرعة الكتاب لحظة وصوله الأرض إذا سقط من الرف (1.80 m)؟',a:'PE = KE ⟸ v = √(2gh) = √(2×9.80×1.80) = 5.9 m/s',
+ctrl(){return slider('m','الكتلة m',0.5,5,0.1,1.2,'kg','setM')+`<span style="font-weight:700">مستوى الإسناد:</span>`+seg('ref',[['0','الأرض'],['0.75','الطاولة'],['1.8','الرف']],'0','setRef')+
+`<button class="btn alt" onclick="S.setStart()">📍 ثبّتي البداية</button><button class="btn" onclick="S.drop()">⬇ أسقطي الكتاب</button><button class="btn ghost" onclick="S.reset()">↺ إعادة</button>`},
+init(){this.m=1.2;this.y=1.8;this.ref=0;this.start=null;this.v=0;this.fall=false;this.impact=null;this.drag=null},
+scene(G){const {sw,s,X,py}=G;
+ ctx.fillStyle='#b8865a';ctx.fillRect(X+50,py(0.75),150,10);ctx.fillRect(X+60,py(0.75),10,0.75*s);ctx.fillRect(X+180,py(0.75),10,0.75*s);txt('الطاولة 0.75 m',X+125,py(0.75)-12,{s:12,b:1});
+ ctx.fillStyle='#e9d8c4';ctx.fillRect(X-60,py(2.4),120,2.4*s);ctx.fillStyle='#a77b4f';[0.6,1.2,1.8].forEach(h=>ctx.fillRect(X-66,py(h),132,8));txt('الرف 1.80 m',X-120,py(1.8)-12,{s:12,b:1});
+ const cols=['#e2557b','#2f7fd8','#14967f','#f2a516','#7b5cd6'];[0.6,1.2].forEach(h=>{for(let i=0;i<6;i++){ctx.fillStyle=cols[(i+h*5)%5|0];ctx.fillRect(X-55+i*18,py(h)-0.42*s,14,0.42*s)}});},
+obj(x,y,r){ctx.save();ctx.fillStyle='#2f5fd0';rr(x-r*1.3,y-r*.55,r*2.6,r*1.3,4);ctx.fill();ctx.fillStyle='#f4e7c8';ctx.fillRect(x-r*1.2,y+r*.45,r*2.4,r*.25);ctx.restore()}});
+
+/* 2) ramp / skier */
+EXPS.ramp={tab:'⛷ المنحدر',img:'ski',title:'محاكاة المتزلّجة: تحوّل PE ⇄ KE',
+hint:'اسحبي المتزلّجة على المنحدر لاختيار ارتفاع البداية ثم اضغطي «انطلقي»',
+explain:`<b>فكرة المحاكاة:</b> تنزلق المتزلّجة على منحدر على شكل حرف U، فتتحول طاقة الوضع إلى طاقة حركية ثم العكس.<ol><li>اختاري <b>ارتفاع البداية</b> بسحب المتزلّجة.</li><li>اضغطي <b>انطلقي</b> وراقبي الأعمدة: كلما نزلت قلّت PE وزادت KE.</li><li>بدون احتكاك: <b>المجموع ثابت</b> وتعود إلى الارتفاع نفسه.</li><li>شغّلي <b>الاحتكاك</b>: يظهر عمود «حرارة» ويقل ارتفاعها تدريجيًّا.</li><li>غيّري <b>مستوى الإسناد</b>: يتغير المجموع لكن التغيرات نفسها.</li></ol>`,
+q:'متزلّجة 60 kg تبدأ من السكون على ارتفاع 5.0 m بلا احتكاك. ما سرعتها في القاع؟',a:'PE = KE ⟸ mgh = ½mv² ⟸ v = √(2gh) = √(2×9.80×5.0) = 9.9 m/s (لا تعتمد على الكتلة).',
+ctrl(){return slider('m2','الكتلة',20,100,1,60,'kg','setM')+`<label><input type="checkbox" onchange="S.fr=this.checked"> احتكاك ومقاومة هواء</label><span style="font-weight:700">مستوى الإسناد:</span>`+seg('ref2',[['0','القاع'],['2.5','منتصف المنحدر']],'0','setRef')+`<button class="btn" onclick="S.go()">▶ انطلقي</button><button class="btn warn" onclick="S.run=false">⏸ إيقاف</button><button class="btn ghost" onclick="S.init()">↺</button>`},
+init(){this.m=this.m||60;this.Hm=5;this.L=6;this.x=-6*Math.sqrt(4/5);this.xd=0;this.h0=4;this.run=false;this.fr=this.fr||false;this.ref=this.ref||0;this.heat=0;this.trail=[]},
+setM(v){this.m=v},setRef(v){this.ref=+v},
+yf(x){return this.Hm*(x/this.L)**2},dy(x){return 2*this.Hm*x/this.L**2},
+go(){this.h0=this.yf(this.x);this.E0=this.m*g*this.h0;this.xd=0;this.run=true;this.heat=0;this.trail=[]},
+step(dt){if(!this.run)return;const n=8,h=dt/n;for(let i=0;i<n;i++){const yp=this.dy(this.x),ypp=2*this.Hm/this.L**2;let a=-(g+ypp*this.xd*this.xd)*yp/(1+yp*yp);if(this.fr)a-=0.18*this.xd;this.xd+=a*h;this.x+=this.xd*h;
+ if(!this.fr){const v2=2*g*(this.h0-this.yf(this.x));const sp=Math.sqrt(Math.max(0,v2)/(1+this.dy(this.x)**2));this.xd=(this.xd>=0?1:-1)*sp}
+ if(Math.abs(this.x)>this.L){this.x=Math.sign(this.x)*this.L;this.xd=-this.xd*0.2}}
+ const v2=this.xd*this.xd*(1+this.dy(this.x)**2);this.heat=this.fr?Math.max(0,this.E0-0.5*this.m*v2-this.m*g*this.yf(this.x)):0;
+ if(this.fr&&v2<0.002&&Math.abs(this.x)<0.05)this.run=false},
+geo(){const sw=SW,s=(sw-50)/13,sy=(H-110)/5.6,cx=sw/2,by=H-44;return{sw,s,P:(x,y)=>[cx+x*s,by-y*sy]}},
+draw(){const {sw,s,P}=this.geo();
+ ctx.save();ctx.beginPath();for(let x=-this.L;x<=this.L+1e-6;x+=0.1){const [px,py]=P(x,this.yf(x));x===-this.L?ctx.moveTo(px,py):ctx.lineTo(px,py)}ctx.strokeStyle='#5b6c99';ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();ctx.restore();
+ const ry=P(0,this.ref)[1];line(10,ry,sw-10,ry,'#e2364f',3,[10,6]);txt('مستوى الإسناد',60,ry-12,{s:12,b:1,c:'#e2364f'});
+ for(let h=0;h<=5;h++){const [,py]=P(0,h);ltr(h+' m',14,py,{s:10,c:'#7d8bb3'})}
+ const y=this.yf(this.x),[px,py]=P(this.x,y);
+ if(this.run){this.trail.push([px,py]);if(this.trail.length>40)this.trail.shift()}
+ this.trail.forEach((t,i)=>{ctx.fillStyle=`rgba(226,85,123,${i/50})`;ctx.beginPath();ctx.arc(t[0],t[1]-12,3,0,7);ctx.fill()});
+ ctx.save();ctx.font='34px serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('⛷️',px,py+4);ctx.restore();
+ const v2=this.xd*this.xd*(1+this.dy(this.x)**2),v=Math.sqrt(v2);const PE=this.m*g*(y-this.ref),KE=0.5*this.m*v2;
+ panel(sw*0.5-110,10,[`h = ${(y-this.ref).toFixed(2)} m`,`v = ${v.toFixed(2)} m/s = ${(v*3.6).toFixed(0)} km/h`,`PE = ${fmt(PE)} J   KE = ${fmt(KE)} J`],220);
+ bars(BX,BY,BW,BH,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'},{l:'حرارة',v:this.heat,c:'#f2a516'},{l:'المجموع',v:PE+KE+this.heat,c:'#7b5cd6'}],this.m*g*5.2,this.ref>0);},
+down(x,y){const {P}=this.geo();const [px,py]=P(this.x,this.yf(this.x));if(Math.hypot(x-px,y-py+16)<40){this.drag=1;this.run=false;this.xd=0;this.heat=0;this.trail=[]}},
+move(x){if(!this.drag)return;const {sw,s}=this.geo();this.x=Math.max(-this.L,Math.min(this.L,(x-sw/2)/s))},up(){this.drag=0}};
+
+/* 3) cart: work -> kinetic energy */
+EXPS.cart={tab:'🛒 الشغل والطاقة الحركية',img:'cart',title:'نظرية الشغل – الطاقة: W = ΔKE',
+hint:'اختاري القوة والمسافة ثم اضغطي «ادفعي»؛ تُسجَّل كل محاولة في الجدول',
+explain:`<b>فكرة المحاكاة:</b> تدفع الطالبة العربة بقوة أفقية ثابتة على أرض ملساء، فيتحول الشغل W = Fd كله إلى طاقة حركية.<ol><li>اختاري <b>القوة F</b> و<b>مسافة الدفع d</b>.</li><li>اضغطي <b>ادفعي</b>: يظهر سهم القوة ما دامت تدفع.</li><li>كرّري بمضاعفة d: يتضاعف <b>W وKE</b>، لكن السرعة تزيد <b>√2 مرة فقط</b>.</li></ol>`,
+q:'لماذا لا تتضاعف سرعة العربة عند مضاعفة مسافة الدفع؟',a:'لأن KE = ½mv² تتناسب مع مربع السرعة؛ فمضاعفة KE تزيد السرعة √2 ≈ 1.41 مرة فقط.',
+ctrl(){return slider('F','القوة F',10,60,1,30,'N','setF')+slider('d','المسافة d',0.5,4,0.5,2,'m','setD')+slider('mc','الكتلة',4,20,1,12,'kg','setM')+`<button class="btn" onclick="S.go()">➜ ادفعي</button><button class="btn ghost" onclick="S.trials=[];S.init(1)">↺ مسح الجدول</button>`},
+init(keep){this.F=this.F||30;this.d=this.d||2;this.m=this.m||12;this.x=0;this.v=0;this.state='idle';if(!keep&&!this.trials)this.trials=[]},
+setF(v){this.F=v},setD(v){this.d=v},setM(v){this.m=v},
+go(){this.x=0;this.v=0;this.state='push'},
+step(dt){if(this.state==='idle')return;if(this.state==='push'){this.v+=this.F/this.m*dt;this.x+=this.v*dt;if(this.x>=this.d){this.x=this.d;this.v=Math.sqrt(2*this.F*this.d/this.m);this.state='coast';this.trials.push([this.d,this.F*this.d,this.v,this.F]);if(this.trials.length>5)this.trials.shift()}}else{this.x+=this.v*dt;if(this.x>7.2){this.state='idle'}}},
+draw(){const sw=SW,s=(sw-60)/8,gy=H*0.62,X=x=>30+x*s;
+ ctx.fillStyle='#9fb2d6';ctx.fillRect(20,gy,sw-30,8);
+ for(let m=0;m<=8;m++){line(X(m),gy+8,X(m),gy+16,'#7d8bb3',2);ltr(m+' m',X(m),gy+28,{s:10})}
+ ctx.fillStyle='rgba(20,150,127,.18)';ctx.fillRect(X(0),gy-90,this.d*s,90);txt('منطقة الدفع d',X(this.d/2),gy-100,{s:12,b:1,c:'#14967f'});
+ const cx=X(this.x);ctx.fillStyle='#2f5fd0';rr(cx-50,gy-52,100,30,6);ctx.fill();ctx.fillStyle='#ccd6ec';rr(cx-50,gy-58,100,8,3);ctx.fill();
+ [cx-34,cx+34].forEach(wx=>{ctx.fillStyle='#333';ctx.beginPath();ctx.arc(wx,gy-12,12,0,7);ctx.fill();ctx.fillStyle='#bbb';ctx.beginPath();ctx.arc(wx,gy-12,4,0,7);ctx.fill()});
+ ball(cx,gy-76,17,'#f08a24');
+ if(this.state==='push')arrow(cx-110,gy-40,cx-54,gy-40,'#e2364f',6),txt('F',cx-95,gy-58,{b:1,c:'#e2364f'});
+ const W_=this.state==='push'?this.F*this.x:(this.state==='idle'&&this.x===0?0:this.F*this.d),KE=0.5*this.m*this.v*this.v;
+ panel(sw/2-120,10,[`W = F d = (${this.F})(${(this.state==='push'?this.x:this.d).toFixed(2)}) = ${fmt(W_)} J`,`KE = ½mv² = ${fmt(KE)} J`,`v = √(2KE/m) = ${this.v.toFixed(2)} m/s`],240);
+ // trials table
+ const tx=30,ty=gy+46;txt('سجل المحاولات',sw/2,ty,{b:1,s:13});
+ const cols=['F (N)','d (m)','W (J)','v (m/s)'];cols.forEach((c,i)=>ltr(c,tx+(i+.5)*(sw-60)/4,ty+22,{s:12,b:1,c:'#14967f'}));
+ this.trials.forEach((t,j)=>[t[3],t[0],t[1].toFixed(0),t[2].toFixed(2)].forEach((c,i)=>ltr(String(c),tx+(i+.5)*(sw-60)/4,ty+44+j*20,{s:12})));
+ bars(BX,BY,BW,BH,[{l:'الشغل W',v:W_,c:'#f2a516'},{l:'KE',v:KE,c:'#e2557b'}],60*4);}};
+
+/* 4) spring */
+EXPS.spring={tab:'🌀 النابض',img:'spring',title:'طاقة الوضع المرونية في النابض',
+hint:'اسحبي المكعب نحو الجدار لضغط النابض ثم اضغطي «أفلتي»',
+explain:`<b>فكرة المحاكاة:</b> عندما نضغط النابض نبذل عليه شغلًا فيختزن <b>طاقة وضع مرونية</b>، وعند إفلاته تتحول إلى <b>طاقة حركية</b> للمكعب.<ol><li>اضغطي النابض بالسحب أو المنزلق.</li><li>اضغطي <b>أفلتي</b> وراقبي انتقال الطاقة من العمود الأخضر إلى الوردي.</li><li>جرّبي نابضًا أصلب (k أكبر): تُختزن طاقة أكبر للضغط نفسه.</li></ol><small>إثراء: طاقة النابض PE = ½kx² ستدرسينها لاحقًا.</small>`,
+q:'ما شكل الطاقة في النابض المضغوط؟ وإلى أي شكل تتحول عند إفلاته؟',a:'طاقة وضع مرونية، تتحول إلى طاقة حركية للمكعب عند إفلاته.',
+ctrl(){return slider('cx','مقدار الضغط x',0.05,0.3,0.01,0.2,'m','setX')+slider('k','صلابة النابض k',100,800,50,400,'N/m','setK')+`<button class="btn" onclick="S.go()">🚀 أفلتي</button><button class="btn ghost" onclick="S.init()">↺</button>`},
+init(){this.k=this.k||400;this.m=1;this.xc=this.xc||0.2;this.xb=-this.xc;this.v=0;this.state='hold'},
+setX(v){this.xc=v;if(this.state!=='go'){this.xb=-v;this.state='hold';this.v=0}},setK(v){this.k=v},
+go(){this.state='go';this.v=0;this.xb=-this.xc},
+step(dt){if(this.state!=='go')return;const n=10,h=dt/n;for(let i=0;i<n;i++){if(this.xb<0){this.v+=-this.k*this.xb/this.m*h}this.xb+=this.v*h}if(this.xb>2.2)this.state='done'},
+draw(){const sw=SW,s=(sw-60)/3,gy=H*0.6,wall=30,nat=0.7;
+ ctx.fillStyle='#8a94ad';ctx.fillRect(wall-14,gy-110,14,110);ctx.fillStyle='#b9c4dc';ctx.fillRect(wall,gy,sw-40,8);
+ const sl=nat+Math.min(0,this.xb);const L=sl*s;ctx.save();ctx.strokeStyle='#5d6880';ctx.lineWidth=4;ctx.beginPath();const coils=14;for(let i=0;i<=coils*10;i++){const t=i/(coils*10);const x=wall+t*L,y=gy-40+Math.sin(t*coils*2*Math.PI)*18;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();ctx.restore();
+ const bx=wall+(nat+this.xb)*s;ctx.fillStyle='#2f7fd8';rr(bx,gy-80,0.25*s,80,10);ctx.fill();txt('1 kg',bx+0.125*s,gy-40,{c:'#fff',b:1});
+ line(wall+nat*s,gy-120,wall+nat*s,gy+10,'#9aa6c7',1,[4,4]);txt('الطول الطبيعي',wall+nat*s,gy-130,{s:11});
+ const x=Math.max(0,-this.xb),PEe=0.5*this.k*x*x,KE=0.5*this.m*this.v*this.v;
+ panel(sw/2-10,10,[`x = ${x.toFixed(2)} m`,`PE مرونية = ${fmt(PEe)} J`,`KE = ${fmt(KE)} J   v = ${this.v.toFixed(2)} m/s`],230);
+ bars(BX,BY,BW,BH,[{l:'PE مرونية',v:PEe,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'},{l:'المجموع',v:PEe+KE,c:'#7b5cd6'}],0.5*800*0.09);},
+down(x,y){const sw=SW,s=(sw-60)/3,bx=30+(0.7+this.xb)*s;if(x>bx-20&&x<bx+0.25*s+20)this.drag=1,this.state='hold',this.v=0},
+move(x){if(!this.drag)return;const sw=SW,s=(sw-60)/3;this.xc=Math.max(0.0,Math.min(0.3,0.7-((x-0.12*s)-30)/s));this.xb=-this.xc;const el=document.getElementById('cx');if(el){el.value=this.xc;document.getElementById('cxv').textContent=this.xc.toFixed(2)+' m'}},up(){this.drag=0}};
+
+/* 5) bow */
+EXPS.bow={tab:'🏹 القوس',img:'archery',title:'الرماية بالقوس: مرونية ⟵ حركية',
+hint:'اختاري مسافة السحب والقوة ثم اضغطي «أفلتي السهم»',
+explain:`<b>فكرة المحاكاة:</b> عند سحب الوتر نبذل شغلًا W = Fd يُختزن في القوس <b>طاقة وضع مرونية</b>، وعند الإفلات تنتقل إلى السهم <b>طاقةً حركية</b>.<ol><li>غيّري <b>مسافة السحب</b> و<b>القوة المتوسطة</b>.</li><li>أفلتي السهم واقرئي سرعته.</li><li>قارني: سحب 0.50 m بقوة 100 N يعطي 50 J وسرعة نحو 63 m/s.</li></ol>`,
+q:'لماذا تُصنع الأقواس من مواد مرنة؟',a:'لتختزن أكبر قدر من طاقة الوضع المرونية ثم تعيدها إلى السهم طاقةً حركية.',
+ctrl(){return slider('bd','مسافة السحب d',0.1,0.7,0.05,0.5,'m','setD')+slider('bf','القوة المتوسطة F',20,150,5,100,'N','setF')+`<button class="btn" onclick="S.go()">🏹 أفلتي السهم</button><button class="btn ghost" onclick="S.init()">↺</button>`},
+init(){this.d=this.d||0.5;this.F=this.F||100;this.m=0.025;this.ax=0;this.state='aim';this.hit=false},
+setD(v){this.d=v;this.init()},setF(v){this.F=v;this.init()},go(){this.state='fly';this.ax=0},
+step(dt){if(this.state==='fly'){const v=Math.sqrt(2*this.F*this.d/this.m);this.ax+=dt*(0.4+v/120);if(this.ax>=1){this.ax=1;this.state='hit'}}},
+draw(){const sw=SW,cy=H*0.45,bx=sw*0.18,tx=sw*0.9,pull=this.state==='aim'?this.d*sw*0.18:0;
+ // target
+ [['#fff',44],['#2f5fd0',36],['#e2364f',24],['#f2c216',12]].forEach(([c,r])=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(tx,cy,r,0,7);ctx.fill()});
+ ctx.save();ctx.strokeStyle='#9b6b33';ctx.lineWidth=7;ctx.beginPath();ctx.arc(bx-60,cy,90,-0.95,0.95);ctx.stroke();ctx.restore();
+ const top=[bx-60+90*Math.cos(-0.95),cy+90*Math.sin(-0.95)],bot=[bx-60+90*Math.cos(0.95),cy+90*Math.sin(0.95)];
+ line(top[0],top[1],top[0]-pull,cy,'#333',2);line(bot[0],bot[1],top[0]-pull,cy,'#333',2);
+ const ax=this.state==='aim'?top[0]-pull:top[0]+(tx-top[0]-40)*this.ax;arrow(ax,cy,ax+90,cy,'#7a4b1a',4);
+ const W_=this.F*this.d,v=Math.sqrt(2*W_/this.m),fly=this.state!=='aim';
+ if(this.state==='hit')txt('🎯 إصابة!',tx,cy-64,{b:1,s:18,c:'#e2364f'});
+ panel(sw*0.3,H*0.68,[`W = F d = (${this.F})(${this.d.toFixed(2)}) = ${fmt(W_)} J`,`PE مرونية = ${fmt(W_)} J`,`v = √(2KE/m) = ${v.toFixed(0)} m/s ≈ ${(v*3.6).toFixed(0)} km/h`],Math.min(300,sw*0.6));
+ bars(BX,BY,BW,BH,[{l:'PE مرونية',v:fly?0:W_,c:'#14967f'},{l:'KE السهم',v:fly?W_:0,c:'#e2557b'}],150*0.7);}};
+
+/* 6) pendulum */
+EXPS.pend={tab:'🕰 البندول',img:'pendulum',title:'البندول: تبادل طاقة الوضع والحركية',
+hint:'اسحبي الكرة الذهبية جانبًا ثم أفلتيها',
+explain:`<b>فكرة المحاكاة:</b> عند رفع كرة البندول جانبًا تكتسب طاقة وضع، وعند إفلاتها تتأرجح فتتحول PE إلى KE عند أدنى نقطة ثم تعود.<ol><li>اسحبي الكرة إلى أي زاوية وأفلتيها.</li><li>لاحظي: عند الطرفين KE = 0، وعند المنتصف PE = 0 (مستوى الإسناد عند أدنى نقطة).</li><li>شغّلي <b>مقاومة الهواء</b>: يقل الارتفاع تدريجيًّا وتظهر الحرارة.</li></ol>`,
+q:'أين تكون سرعة كرة البندول أكبر ما يمكن؟ ولماذا؟',a:'عند أدنى نقطة؛ لأن طاقة الوضع هناك أقل ما يمكن فتكون الطاقة الحركية أكبر ما يمكن.',
+ctrl(){return slider('pl','طول الخيط',0.5,2,0.1,1.2,'m','setL')+slider('pm','الكتلة',0.2,3,0.1,1,'kg','setM')+`<label><input type="checkbox" onchange="S.fr=this.checked"> مقاومة الهواء</label><button class="btn ghost" onclick="S.init()">↺</button>`},
+init(){this.L=this.L||1.2;this.m=this.m||1;this.th=0.8;this.w=0;this.run=true;this.E0=this.m*g*this.L*(1-Math.cos(this.th))},
+setL(v){this.L=v;this.init()},setM(v){this.m=v;this.init()},
+step(dt){if(!this.run)return;const n=8,h=dt/n;for(let i=0;i<n;i++){let a=-(g/this.L)*Math.sin(this.th);if(this.fr)a-=0.25*this.w;this.w+=a*h;this.th+=this.w*h}},
+geo(){const sw=SW,s=(H-90)/2.3;return{sw,s,px:sw/2,py:40}},
+draw(){const {sw,s,px,py}=this.geo();ctx.fillStyle='#4b557a';rr(px-80,py-12,160,12,4);ctx.fill();
+ const bx=px+Math.sin(this.th)*this.L*s,by=py+Math.cos(this.th)*this.L*s;
+ ctx.save();ctx.strokeStyle='rgba(31,42,92,.15)';ctx.lineWidth=2;ctx.setLineDash([4,6]);ctx.beginPath();ctx.arc(px,py,this.L*s,Math.PI/2-1.3,Math.PI/2+1.3);ctx.stroke();ctx.restore();
+ line(px,py,bx,by,'#8a6d2b',2);ball(bx,by,16,'#e4b230');
+ const low=py+this.L*s;line(px-120,low+16,px+120,low+16,'#e2364f',2,[8,6]);txt('مستوى الإسناد (أدنى نقطة)',px,low+32,{s:11,b:1,c:'#e2364f'});
+ const h=this.L*(1-Math.cos(this.th)),v=Math.abs(this.w)*this.L,PE=this.m*g*h,KE=0.5*this.m*v*v,heat=Math.max(0,this.E0-PE-KE);
+ if(h>0.005)arrow(bx+28,low+16,bx+28,by+16,'#14967f',2),ltr('h='+h.toFixed(2)+' m',bx+64,(low+by)/2+16,{s:11,b:1,c:'#14967f'});
+ panel(14,10,[`h = L(1 − cosθ) = ${h.toFixed(3)} m`,`PE = ${fmt(PE)} J`,`KE = ${fmt(KE)} J   v = ${v.toFixed(2)} m/s`],220);
+ bars(BX,BY,BW,BH,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'},{l:'حرارة',v:this.fr?heat:0,c:'#f2a516'},{l:'المجموع',v:PE+KE+(this.fr?heat:0),c:'#7b5cd6'}],this.m*g*this.L*1.05);},
+down(x,y){const {px,py,s}=this.geo();const bx=px+Math.sin(this.th)*this.L*s,by=py+Math.cos(this.th)*this.L*s;if(Math.hypot(x-bx,y-by)<40){this.drag=1;this.run=false;this.w=0}},
+move(x,y){if(!this.drag)return;const {px,py}=this.geo();this.th=Math.max(-1.4,Math.min(1.4,Math.atan2(x-px,y-py)))},
+up(){if(this.drag){this.drag=0;this.w=0;this.run=true;this.E0=this.m*g*this.L*(1-Math.cos(this.th))}}};
+
+/* 7) bounce (opening lab) */
+EXPS.bounce={tab:'🏀 الكرة المرتدة',img:'ramp',title:'التجربة الاستهلالية: ارتفاع الارتداد',
+hint:'اختاري ارتفاع السقوط ثم اضغطي «أسقطي»؛ تُرسم النقاط على الرسم البياني',
+explain:`<b>فكرة المحاكاة:</b> تسقط كرة السلة من ارتفاع ما، وعند كل ارتطام يتحول جزء من طاقتها إلى <b>حرارة وصوت وتشوّه</b>؛ فلا ترتد إلى الارتفاع نفسه.<ol><li>اختاري <b>ارتفاع السقوط</b> و<b>نسبة الطاقة المحفوظة</b> عند الارتطام.</li><li>اضغطي <b>أسقطي</b>: يُسجَّل كل (ارتفاع سقوط، ارتفاع ارتداد) نقطةً على الرسم.</li><li>النقاط تقع على خط مستقيم <b>ميله</b> يساوي نسبة الطاقة المحفوظة.</li></ol>`,
+q:'إذا كان ميل خط الرسم 0.6، فإلى أي ارتفاع ترتد الكرة إذا أُسقطت من 10.0 m؟',a:'ارتفاع الارتداد = 0.6 × 10.0 = 6.0 m تقريبًا (نمدّ أفضل خط إلى x = 10 m).',
+ctrl(){return slider('bh','ارتفاع السقوط',0.5,3,0.1,2,'m','setH')+slider('be','الطاقة المحفوظة',0.4,0.95,0.05,0.6,'','setE')+`<button class="btn" onclick="S.go()">⬇ أسقطي</button><button class="btn ghost" onclick="S.pts=[];S.init(1)">↺ مسح الرسم</button>`},
+init(keep){this.H0=this.H0||2;this.e=this.e||0.6;this.m=0.6;this.y=this.H0;this.v=0;this.run=false;this.heat=0;this.peak=this.H0;this.lastDrop=this.H0;if(!keep&&!this.pts)this.pts=[]},
+setH(v){this.H0=v;if(!this.run){this.y=v}},setE(v){this.e=v},
+go(){this.y=this.H0;this.v=0;this.run=true;this.heat=0;this.lastDrop=this.H0;this.peak=this.H0;this.n=0},
+step(dt){if(!this.run)return;const n=6,h=dt/n;for(let i=0;i<n;i++){this.v-=g*h;this.y+=this.v*h;
+ if(this.y<=0){this.y=0;const KE=0.5*this.m*this.v*this.v;this.heat+=KE*(1-this.e);this.v=Math.sqrt(2*KE*this.e/this.m);this.rising=true;this.n++;if(this.n>6||this.v<0.3){this.run=false;this.v=0}}
+ if(this.rising&&this.v<=0){this.rising=false;this.pts.push([this.lastDrop,this.y]);if(this.pts.length>30)this.pts.shift();this.lastDrop=this.y}}},
+draw(){const sw=W*0.36,gy=H-30,s=(H-70)/3.2,X=sw*0.5;
+ for(let h=0;h<=3;h+=0.5){line(30,gy-h*s,40,gy-h*s,'#7d8bb3',2);ltr(h.toFixed(1),18,gy-h*s,{s:10})}
+ ctx.fillStyle='#c79a6a';ctx.fillRect(40,gy,sw-40,8);
+ line(X-40,gy-this.H0*s,X+40,gy-this.H0*s,'#7b5cd6',2,[4,4]);
+ const r=16;ctx.save();ctx.fillStyle='#f08a24';ctx.beginPath();ctx.arc(X,gy-this.y*s-r,r,0,7);ctx.fill();ctx.strokeStyle='#7a3c00';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(X,gy-this.y*s-r,r,0,7);ctx.moveTo(X-r,gy-this.y*s-r);ctx.lineTo(X+r,gy-this.y*s-r);ctx.stroke();ctx.restore();
+ // graph
+ const gx=sw+10,gw=SW-sw-20,gyy=20,gh=H*0.55;ctx.save();rr(gx,gyy,gw,gh,12);ctx.fillStyle='rgba(255,255,255,.95)';ctx.fill();ctx.restore();
+ const ox=gx+40,oy=gyy+gh-30,sx=(gw-60)/3,sy=(gh-60)/3;line(ox,oy,ox+gw-55,oy,'#1f2a5c',2);line(ox,oy,ox,gyy+15,'#1f2a5c',2);
+ txt('ارتفاع السقوط x (m)',ox+(gw-60)/2,oy+20,{s:11,b:1});txt('الارتداد y',ox+4,gyy+12,{s:11,b:1,a:'left',dir:'ltr'});
+ for(let i=1;i<=3;i++){ltr(i+'',ox+i*sx,oy+9,{s:9});ltr(i+'',ox-10,oy-i*sy,{s:9})}
+ line(ox,oy,ox+3*sx,oy-3*this.e*sy,'#14967f',2,[6,4]);ltr('الميل = '+this.e,ox+3*sx-30,oy-3*this.e*sy-12,{s:11,b:1,c:'#14967f'});
+ this.pts.forEach(p=>{ctx.fillStyle='#e2557b';ctx.beginPath();ctx.arc(ox+p[0]*sx,oy-p[1]*sy,4,0,7);ctx.fill()});
+ const PE=this.m*g*this.y,KE=0.5*this.m*this.v*this.v;
+ panel(gx+10,gyy+gh+10,[`PE = ${fmt(PE)} J   KE = ${fmt(KE)} J`,`حرارة وصوت = ${fmt(this.heat)} J`],Math.min(240,gw-20));
+ bars(BX,BY,BW,BH,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'},{l:'حرارة',v:this.heat,c:'#f2a516'}],this.m*g*3.1);}};
+
+/* 8) rotational */
+EXPS.rot={tab:'🎡 الحركة الدورانية',img:'wheel',title:'الطاقة الحركية الدورانية',
+hint:'غيّري السرعة الزاوية وتوزيع الكتلة وراقبي الطاقة',
+explain:`<b>فكرة المحاكاة:</b> العجلة تدور حول محورها دون أن تنتقل، ومع ذلك لها <b>طاقة حركية دورانية</b> لأننا بذلنا عليها شغلًا.<ol><li>زيدي <b>السرعة الزاوية ω</b>: تزداد الطاقة الدورانية بسرعة.</li><li>غيّري <b>توزيع الكتلة</b>: الكتلة البعيدة عن المحور تعطي طاقة أكبر للسرعة الزاوية نفسها.</li><li>فعّلي <b>الانتقال</b>: تجتمع طاقة خطية ودورانية كالغطّاس.</li></ol>`,
+q:'علامَ تعتمد الطاقة الحركية الدورانية؟',a:'على السرعة الزاوية ω وعلى طريقة توزيع الكتلة حول محور الدوران.',
+ctrl(){return slider('w','السرعة الزاوية ω',0,20,1,8,'rad/s','setW')+`<span style="font-weight:700">توزيع الكتلة:</span>`+seg('dist',[['1','عند الحافة'],['0.5','منتظم'],['0.2','قرب المركز']],'0.5','setK')+`<label><input type="checkbox" onchange="S.lin=this.checked"> تنتقل أيضًا (v = 2 m/s)</label>`},
+init(){this.w=this.w||8;this.k=this.k||0.5;this.ang=0;this.m=5;this.r=0.4;this.lin=this.lin||false;this.x=0},
+setW(v){this.w=v},setK(v){this.k=+v},
+step(dt){this.ang+=this.w*dt*0.35;if(this.lin){this.x+=2*dt*0.35;if(this.x>1)this.x=-1}else this.x*=0.9},
+draw(){const sw=SW,cx=sw/2+this.x*sw*0.3,cy=H*0.45,R=Math.min(sw,H)*0.28;
+ ctx.save();ctx.translate(cx,cy);ctx.rotate(this.ang);
+ for(let i=0;i<12;i++){ctx.fillStyle=`hsl(${i*30},75%,70%)`;ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,i*Math.PI/6,(i+1)*Math.PI/6);ctx.fill()}
+ ctx.strokeStyle='#8a94ad';ctx.lineWidth=8;ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.stroke();
+ const n=8,rr2=R*Math.sqrt(this.k);for(let i=0;i<n;i++){const a=i*Math.PI*2/n;ball(Math.cos(a)*rr2,Math.sin(a)*rr2,10,'#2f5fd0')}
+ ctx.fillStyle='#4b557a';ctx.beginPath();ctx.arc(0,0,12,0,7);ctx.fill();ctx.restore();
+ const I=this.k*this.m*this.r*this.r,KEr=0.5*I*this.w*this.w,KEl=this.lin?0.5*this.m*4:0;
+ panel(14,10,[`KE دورانية = ${fmt(KEr)} J`,`KE خطية = ${fmt(KEl)} J`,`ω = ${this.w} rad/s`],210);
+ bars(BX,BY,BW,BH,[{l:'خطية',v:KEl,c:'#2f7fd8'},{l:'دورانية',v:KEr,c:'#e2557b'},{l:'المجموع',v:KEl+KEr,c:'#7b5cd6'}],0.5*1*5*0.16*400);}};
+
+/* 9) rest energy */
+EXPS.mc2={tab:'⚛ E₀ = mc²',img:'hall',title:'الطاقة السكونية E₀ = mc²',
+hint:'حرّكي منزلق الكتلة وشاهدي كم طاقةً تكافئ',
+explain:`<b>فكرة المحاكاة:</b> الكتلة نفسها شكل من أشكال الطاقة. تحسب المحاكاة الطاقة السكونية لكتلة صغيرة جدًّا، وتقارنها بزمن إضاءة مصباح قدرته 100 W.<ol><li>غيّري الكتلة بالجرام.</li><li>لاحظي ضخامة الطاقة لأن c² = 9.0×10¹⁶ m²/s².</li><li>تذكّري تحويل الكتلة إلى kg.</li></ol>`,
+q:'كم طاقةً تكافئ كتلة 1.0 g؟',a:'E₀ = (1.0×10⁻³ kg)(3.00×10⁸ m/s)² = 9.0×10¹³ J.',
+ctrl(){return slider('mg','الكتلة',0.001,10,0.001,1,'g','setM')},
+init(){this.mg=this.mg||1;this.t=0},setM(v){this.mg=v},step(dt){this.t+=dt},
+draw(){const sw=SW,cx=sw/2,cy=H*0.38;const E=this.mg*1e-3*9e16,yrs=E/100/3.156e7;
+ const glow=20+10*Math.sin(this.t*3);const gr=ctx.createRadialGradient(cx,cy,10,cx,cy,90+glow);gr.addColorStop(0,'rgba(255,220,90,.95)');gr.addColorStop(1,'rgba(255,220,90,0)');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(cx,cy,90+glow,0,7);ctx.fill();
+ ctx.save();ctx.font='80px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('💡',cx,cy);ctx.restore();
+ panel(cx-150,H*0.62,[`m = ${this.mg} g = ${fmt(this.mg*1e-3)} kg`,`E₀ = m c² = ${fmt(E)} J`,`تكفي لإضاءة مصباح 100 W مدة ${fmt(yrs)} سنة`],300);
+ bars(BX,BY,BW,BH,[{l:'E₀ (J)',v:E,c:'#7b5cd6'}],9e14);}};
+
+/* ======================= ENGINE ======================= */
+const tabs=document.getElementById('tabs'),stage=document.getElementById('stage');
+let cur='pe';
+Object.entries(EXPS).forEach(([k,e])=>{const b=document.createElement('button');b.className='tab';b.innerHTML=`<img src="assets/img/${e.img}.jpg" alt=""><span>${e.tab}</span>`;b.dataset.k=k;b.onclick=()=>select(k);tabs.appendChild(b)});
+function select(k){cur=k;S=EXPS[k];document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.k===k));
+ stage.style.backgroundImage=`url(assets/img/${S.img}.jpg)`;ctrl.innerHTML=S.ctrl?S.ctrl():'';
+ document.getElementById('exTitle').textContent=S.title;document.getElementById('exBody').innerHTML=S.explain;document.getElementById('qText').textContent=S.q;document.getElementById('aText').textContent=S.a;document.getElementById('qa').classList.remove('open');
+ document.getElementById('badge').textContent=S.title;document.getElementById('hint').textContent='👆 '+S.hint;
+ S.init();resize();location.hash=k}
+function pos(e){const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);S.down&&S.down(...pos(e))});
+cv.addEventListener('pointermove',e=>{S.move&&S.move(...pos(e))});
+cv.addEventListener('pointerup',e=>{S.up&&S.up()});cv.addEventListener('pointercancel',e=>{S.up&&S.up()});
+let last=performance.now();
+function loop(t){const dt=Math.min(0.033,(t-last)/1000);last=t;if(CW<10)resize();ctx.clearRect(0,0,CW,CH);if(S){S.step&&S.step(dt);S.draw()}requestAnimationFrame(loop)}
+document.getElementById('alpha').oninput=e=>document.documentElement.style.setProperty('--a',e.target.value);
+document.getElementById('fs').onclick=()=>{if(!document.fullscreenElement)(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen).call(document.documentElement);else document.exitFullscreen()};
+const ex=document.getElementById('explain'),oe=document.getElementById('openEx');
+document.getElementById('closeEx').onclick=()=>{ex.style.display='none';oe.style.display='block'};
+oe.onclick=()=>{ex.style.display='flex';oe.style.display='none'};
+document.fonts&&document.fonts.load('700 14px Almarai');
+select((location.hash||'#pe').slice(1) in EXPS?(location.hash||'#pe').slice(1):'pe');
+requestAnimationFrame(loop);
+function chkRot(){const r=document.getElementById('rot');if(r)r.style.display='none'}addEventListener('resize',chkRot);chkRot();
+</script>
+</body>
+</html>

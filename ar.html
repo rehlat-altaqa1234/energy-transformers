@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>عدسة مُحوِّلات الطاقة | الواقع المعزز</title>
+<style>
+@font-face{font-family:Majalla;src:url(assets/fonts/majalla.ttf)}
+:root{--hh:54px;--st:env(safe-area-inset-top,0px);--a:.62;--navy:#1f2a5c;--teal:#14967f;--amber:#f2a516;--rose:#e2557b;--violet:#7b5cd6}
+*{box-sizing:border-box;font-family:Majalla,'Sakkal Majalla',serif}
+html,body{margin:0;height:100%;overflow:hidden;background:#000;color:var(--navy)}
+#bg{position:fixed;inset:0;background:url(assets/img/hall.jpg) center/cover}
+video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover}
+#cv{position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+.top{position:fixed;top:calc(8px + var(--hh) + var(--st));left:8px;right:8px;display:flex;gap:6px;align-items:center;z-index:5;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.top::-webkit-scrollbar,.bottom::-webkit-scrollbar{display:none}.top>*{flex:none}
+.pill{background:rgba(255,255,255,var(--a));border-radius:20px;padding:6px 12px;font-size:20px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.25);border:0;cursor:pointer;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:6px}
+.pill input{width:70px;accent-color:var(--violet)}
+.sp{flex:1}
+.teacher{background:rgba(31,42,92,var(--a));color:#fff;border-radius:16px;padding:4px 12px;font-size:17px;line-height:1.25;max-width:60vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bottom{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom,0px));left:8px;right:8px;display:flex;gap:6px;justify-content:safe center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;z-index:5}.chip{flex:none}
+.chip{border:0;border-radius:18px;padding:8px 14px;font-size:21px;font-weight:700;background:rgba(255,255,255,var(--a));color:var(--navy);cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.chip.on{background:var(--amber)}
+.side{position:fixed;left:10px;top:55%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:5;background:rgba(255,255,255,var(--a));border-radius:16px;padding:8px;box-shadow:0 4px 12px rgba(0,0,0,.25);font-size:18px;text-align:center}
+.side input[type=range]{writing-mode:vertical-lr;direction:rtl;height:120px;accent-color:var(--teal)}
+.modal{position:fixed;inset:0;background:rgba(10,15,40,.35);display:none;z-index:20;overflow:auto;padding:calc(12px + var(--hh) + var(--st)) 10px 12px}
+.modal.show{display:flex}.modal .box,.start .box{margin:auto}
+.box{background:rgba(255,255,255,calc(var(--a) + .2));border-radius:24px;padding:18px 22px;width:min(560px,94vw);position:relative;font-size:22px;line-height:1.7}
+.box h2{margin:0 0 6px;color:var(--violet);font-size:30px}
+.x{position:absolute;top:10px;left:12px;border:0;background:#eef2fb;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer}
+.box label{display:block;margin:6px 0 2px;font-weight:700}
+.box input,.box select{width:100%;font-size:21px;padding:6px 10px;background:rgba(255,255,255,.6);border:2px solid #dfe6f4;border-radius:12px}
+.btn{border:0;border-radius:14px;padding:8px 18px;font-size:22px;font-weight:700;cursor:pointer;background:var(--teal);color:#fff;margin-top:10px}
+.btn.alt{background:var(--violet)}
+.verse{background:rgba(246,242,230,.75);border-radius:18px;padding:12px 14px;margin:10px 0;text-align:center;font-size:30px;line-height:1.8;color:#3a2b06}
+.verse small{display:block;font-size:19px;color:#8a6d2b}
+.ans{display:none;background:#e6f6f1;color:#0b6b59;border-radius:12px;padding:8px 12px;margin-top:8px;font-weight:700}
+.open .ans{display:block}.open .rev{display:none}
+.start{position:fixed;inset:0;z-index:30;display:flex;overflow:auto;padding:calc(12px + var(--hh) + var(--st)) 10px 12px;background:url(assets/img/hall.jpg) center/cover}
+.start .box{text-align:center;display:flex;gap:10px;align-items:flex-end;width:min(720px,94vw)}
+.start img{height:300px;flex:none}
+.gal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:6px 0}.gal img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.chip img{width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-left:6px;border:2px solid #fff}
+.tbadge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.92);color:#1f2a5c;border-radius:14px;padding:3px 10px 3px 6px;flex:none;line-height:1.25;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.15)}.tbadge img{height:40px}.tbadge b{font-size:19px}
+.start p{font-size:23px;margin:6px 0}
+.toast{position:fixed;top:calc(64px + var(--hh) + var(--st));left:50%;transform:translateX(-50%);background:rgba(31,42,92,.92);color:#fff;border-radius:16px;padding:6px 16px;font-size:21px;z-index:6;pointer-events:none;transition:opacity .4s;text-align:center;max-width:92vw}
+@media (max-width:700px){.start .box{flex-direction:column;align-items:stretch}.start .box>img{display:none}.gal{grid-template-columns:repeat(4,1fr)}.start img{height:auto}.pill{font-size:17px;padding:5px 9px}.chip{font-size:18px;padding:6px 10px}.teacher{font-size:16px}}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:60;height:calc(var(--hh) + var(--st));padding:var(--st) 14px 0;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.96);border-bottom:3px solid #3fa98a;color:#1f2a5c;font-size:13px;line-height:1.45;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.hdr img{height:calc(var(--hh) - 10px)}.hdr .hl{text-align:left}.hdr b{color:#14967f}
+@media (max-width:600px){.hdr{font-size:10.5px;padding-left:8px;padding-right:8px}}
+.hdr{font-size:17px;line-height:1.3}@media (max-width:600px){.hdr{font-size:14px}}
+</style>
+</head>
+<body>
+<header class="hdr"><div class="hr">المملكة العربية السعودية<br>وزارة التعليم</div><img src="assets/img/moe.png" alt="وزارة التعليم"><div class="hl">فيزياء 2 • الدرس <bdi dir="ltr">5-1</bdi><br>المعلمة: <b>أ. ريم الحربي</b></div></header>
+<div id="bg"></div>
+<video id="vid" playsinline muted autoplay></video>
+<canvas id="cv"></canvas>
+<div class="toast" id="toast">👆 اضغطي على أي مكان لوضع المجسّم فيه</div>
+
+<div class="top">
+  <a class="pill" href="index.html">🏠</a>
+  <div class="teacher" id="tbadge"></div>
+  <span class="sp"></span>
+  <button class="pill" id="qBtn">❓ سؤال</button>
+  <button class="pill" id="vBtn">📖 آيات وتلاوة</button>
+  <button class="pill" id="tBtn">⚙ بيانات المعلمة</button>
+  <button class="pill" id="snap">📸</button>
+  <button class="pill" id="flip">🔄</button>
+  <span class="pill">الشفافية <input type="range" id="alpha" min="0.2" max="1" step="0.01" value="0.62"></span>
+  <button class="pill" id="fs">⛶</button>
+</div>
+<div class="side">حجم<input type="range" id="size" min="0.5" max="2" step="0.05" value="1"><span>🔍</span></div>
+<div class="bottom" id="chips"></div>
+
+<div class="start" id="start">
+  <div class="box">
+    <div style="flex:1">
+      <h2>📱 عدسة مُحوِّلات الطاقة</h2><div class="gal"><img src="assets/img/ramp.jpg"><img src="assets/img/pendulum.jpg"><img src="assets/img/spring.jpg"><img src="assets/img/park.jpg"><img src="assets/img/archery.jpg"><img src="assets/img/library.jpg"><img src="assets/img/wheel.jpg"></div>
+      <p><b>الواقع المعزز • الأشكال المتعددة للطاقة</b></p>
+      <p>شغّلي الكاميرا ثم اضغطي على الطاولة أو الأرض لتظهر المجسّمات فوق الواقع: كرة تسقط، وبندول، ونابض، وأفعوانية، وقوس، مع أعمدة الطاقة وقيمها مباشرة.</p>
+      <button class="btn" id="camOn">📷 تشغيل الكاميرا</button>
+      <button class="btn alt" id="camOff">🖼 بدون كاميرا</button>
+      <p style="font-size:18px;color:#7d8bb3">تعمل الكاميرا عند فتح الصفحة في المتصفح (Chrome أو Safari) والسماح بالوصول إليها.</p>
+    </div>
+    <img src="assets/img/guide.png" alt="">
+  </div>
+</div>
+
+<div class="modal" id="tModal"><div class="box"><button class="x" data-close>✕</button>
+  <h2>⚙ بيانات المعلمة</h2>
+  <p style="font-size:19px;color:#7d8bb3;margin:0">تظهر البيانات أعلى شاشة الواقع المعزز وفي الصور الملتقطة، وتُحفظ في هذا الجهاز.</p>
+  <label>المدرسة</label><input id="tSchool" placeholder="اسم المدرسة">
+  <label>المعلمة (اختياري)</label><input id="tName" value="أ. ريم الحربي">
+  <label>المادة</label><input id="tSubject" value="فيزياء 2">
+  <label>الصف / الفصل</label><input id="tClass" value="الثاني الثانوي">
+  <label>الدرس</label><input id="tLesson" value="5-1 الأشكال المتعددة للطاقة">
+  <button class="btn" id="tSave">💾 حفظ</button>
+</div></div>
+
+<div class="modal" id="vModal"><div class="box"><button class="x" data-close>✕</button>
+  <h2>📖 نعمة الطاقة… وإتقان الخلق</h2>
+  <div class="verse">﴿الَّذِي جَعَلَ لَكُم مِّنَ الشَّجَرِ الْأَخْضَرِ نَارًا فَإِذَا أَنتُم مِّنْهُ تُوقِدُونَ﴾<small>[يس: 80]</small>
+    <button class="btn" data-audio="https://everyayah.com/data/Alafasy_128kbps/036080.mp3">▶ استمعي للتلاوة</button></div>
+  <div class="verse">﴿إِنَّا كُلَّ شَيْءٍ خَلَقْنَاهُ بِقَدَرٍ﴾<small>[القمر: 49]</small>
+    <button class="btn" data-audio="https://everyayah.com/data/Alafasy_128kbps/054049.mp3">▶ استمعي للتلاوة</button></div>
+  <div style="font-size:18px;color:#7d8bb3;text-align:center">بصوت الشيخ مشاري العفاسي • تحتاج التلاوة اتصالًا بالإنترنت</div>
+  <div class="qa" id="vqa"><b>ما الربط بدرسنا؟</b><br><button class="btn alt rev" onclick="this.parentNode.classList.add('open')">▶ اضغطي لإظهار الإجابة</button>
+  <div class="ans">الشجر الأخضر يختزن طاقة الشمس طاقةً كيميائية تتحول عند الاحتراق إلى حرارة وضوء، وكل شيء خلقه الله بمقدار دقيق؛ فالطاقة تُحسب بقوانين ثابتة مثل KE = ½mv² و PE = mgh.</div></div>
+</div></div>
+
+<div class="modal" id="qModal"><div class="box"><button class="x" data-close>✕</button>
+  <h2>❓ سؤال المجسّم</h2><div id="qBox"></div>
+</div></div>
+
+<audio id="aud"></audio>
+<script>
+const g=9.8,$=id=>document.getElementById(id);
+const cv=$('cv'),ctx=cv.getContext('2d'),vid=$('vid');let W,H,DPR;
+function resize(){W=innerWidth;H=innerHeight;DPR=Math.min(2,devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+addEventListener('resize',resize);resize();
+const F="Majalla,'Sakkal Majalla',serif";
+function T(s,x,y,sz=22,c='#fff',b=true,al='center'){ctx.save();ctx.font=`${b?'700 ':''}${sz}px ${F}`;ctx.fillStyle=c;ctx.textAlign=al;ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=4;ctx.fillText(s,x,y);ctx.restore()}
+function L(s,x,y,sz=20,c='#fff'){ctx.save();ctx.direction='ltr';T(s,x,y,sz,c);ctx.restore()}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function ball(x,y,r,c){const gr=ctx.createRadialGradient(x-r*.35,y-r*.35,r*.2,x,y,r);gr.addColorStop(0,'#fff');gr.addColorStop(.3,c);gr.addColorStop(1,'#111a4a');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill()}
+function shadow(x,y,w){ctx.save();ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(x,y,w,w*0.22,0,0,7);ctx.fill();ctx.restore()}
+/* AR energy meter floating next to model */
+function meter(x,y,s,items,max){const w=56*items.length+20,h=150*s;ctx.save();rr(x,y-h,w,h,14);ctx.fillStyle=`rgba(255,255,255,${getA()})`;ctx.fill();
+ items.forEach((it,i)=>{const bx=x+14+i*56,hh=Math.max(0,Math.min(1,it.v/max))*(h-58);ctx.fillStyle=it.c;rr(bx,y-30-hh,38,Math.max(2,hh),6);ctx.fill();
+ T(it.l,bx+19,y-14,19,'#1f2a5c');ctx.save();ctx.direction='ltr';ctx.font=`700 15px ${F}`;ctx.fillStyle=it.c;ctx.textAlign='center';ctx.fillText(it.v.toFixed(1)+' J',bx+19,y-38-hh);ctx.restore()});ctx.restore()}
+function getA(){return +getComputedStyle(document.documentElement).getPropertyValue('--a')||.88}
+function tag(x,y,lines,c='#1f2a5c'){ctx.save();ctx.font=`700 20px ${F}`;const w=Math.max(...lines.map(l=>ctx.measureText(l).width))+24,h=lines.length*24+12;rr(x-w/2,y-h,w,h,12);ctx.fillStyle=`rgba(31,42,92,${Math.min(.95,getA())})`;ctx.fill();
+ ctx.beginPath();ctx.moveTo(x-8,y);ctx.lineTo(x+8,y);ctx.lineTo(x,y+10);ctx.fill();lines.forEach((l,i)=>{ctx.direction='ltr';ctx.fillStyle=i?'#fff':'#ffd56b';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(l,x,y-h+18+i*24)});ctx.restore()}
+
+/* ---------- models ---------- */
+let t=0;const M={
+ball:{img:'ramp',name:'🏀 كرة تسقط',q:'كرة 0.60 kg تسقط من 2.0 m. ما طاقتها الحركية لحظة وصولها الأرض (بإهمال مقاومة الهواء)؟',a:'KE = PE = mgh = (0.60)(9.80)(2.0) = 11.8 J',
+ draw(x,y,s){const Hm=2,m=0.6,per=Math.sqrt(2*Hm/g),k=(t%(per+0.6));const fall=Math.min(k,per);const h=Math.max(0,Hm-0.5*g*fall*fall),v=g*fall*(k<per?1:0);const px=140*s;
+  ctx.save();ctx.strokeStyle='rgba(255,255,255,.8)';ctx.setLineDash([6,6]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-50*s,y-Hm*px);ctx.lineTo(x+50*s,y-Hm*px);ctx.stroke();ctx.restore();
+  L('h = '+h.toFixed(2)+' m',x-80*s,y-h*px-20*s,20,'#ffd56b');shadow(x,y,26*s*(0.6+0.4*(1-h/Hm)));ball(x,y-h*px-20*s,20*s,'#f08a24');
+  const PE=m*g*h,KE=k<per?0.5*m*v*v:0;tag(x,y-Hm*px-34*s,['PE = mgh','PE = '+PE.toFixed(1)+' J','KE = '+KE.toFixed(1)+' J']);meter(x+70*s,y,s,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'}],m*g*Hm)}},
+pend:{img:'pendulum',name:'🕰 بندول',q:'أين تكون طاقة الوضع للبندول أكبر ما يمكن؟',a:'عند طرفي الحركة (أعلى نقطتين)، وتكون الطاقة الحركية هناك صفرًا.',
+ draw(x,y,s){const Lm=1,m=1,th0=0.7,th=th0*Math.cos(Math.sqrt(g/Lm)*t),w=-th0*Math.sqrt(g/Lm)*Math.sin(Math.sqrt(g/Lm)*t);const px=200*s,py=y-px*1.15;
+  ctx.fillStyle='#4b557a';rr(x-60*s,py-10*s,120*s,10*s,4);ctx.fill();const bx=x+Math.sin(th)*px,by=py+Math.cos(th)*px;
+  ctx.strokeStyle='#e8d9a8';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,py);ctx.lineTo(bx,by);ctx.stroke();shadow(bx,y,20*s);ball(bx,by,18*s,'#e4b230');
+  const h=Lm*(1-Math.cos(th)),v=Math.abs(w)*Lm,PE=m*g*h,KE=0.5*m*v*v;tag(x,py-16*s,['البندول','PE = '+PE.toFixed(2)+' J','KE = '+KE.toFixed(2)+' J']);
+  meter(x+px*0.8+20*s,y,s,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'}],m*g*Lm*(1-Math.cos(th0)))}},
+spring:{img:'spring',name:'🌀 نابض',q:'نابض مضغوط يدفع مكعبًا عند إفلاته. ما تحوّل الطاقة؟',a:'طاقة وضع مرونية في النابض ← طاقة حركية للمكعب.',
+ draw(x,y,s){const k=400,m=1,A=0.2,om=Math.sqrt(k/m)/3,xb=-A*Math.cos(om*t),v=A*om*3*Math.abs(Math.sin(om*t));const px=420*s,nat=0.5,wall=x-0.6*px;
+  ctx.fillStyle='#8a94ad';ctx.fillRect(wall-10*s,y-90*s,10*s,90*s);shadow(x,y+4,0.6*px);
+  const sl=(nat+xb)*px;ctx.strokeStyle='#cfd6e6';ctx.lineWidth=4*s;ctx.beginPath();for(let i=0;i<=140;i++){const tt=i/140,xx=wall+tt*sl,yy=y-40*s+Math.sin(tt*12*2*Math.PI)*18*s;i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.stroke();
+  ctx.fillStyle='#2f7fd8';rr(wall+sl,y-75*s,70*s,75*s,10);ctx.fill();T('1 kg',wall+sl+35*s,y-38*s,22*s);
+  const PEe=0.5*k*xb*xb,KE=Math.max(0,0.5*k*A*A-PEe);tag(wall+sl+35*s,y-90*s,['PE مرونية = '+PEe.toFixed(1)+' J','KE = '+KE.toFixed(1)+' J']);
+  meter(x+0.55*px,y,s,[{l:'مرونية',v:PEe,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'}],0.5*k*A*A)}},
+coaster:{img:'park',name:'🎢 أفعوانية',q:'قطار كتلته 5000 kg على قمة 40 m. ما طاقة وضعه؟ وما سرعته في القاع؟',a:'PE = (5000)(9.80)(40) = 1.96×10⁶ J ، v = √(2gh) ≈ 28 m/s بإهمال الاحتكاك.',
+ draw(x,y,s){const w=520*s,hh=230*s,f=u=>y-hh*(0.15+0.85*Math.pow(Math.cos(u*Math.PI),2)*(u<0.5?1:0.7));// u 0..1
+  ctx.save();ctx.lineWidth=8*s;ctx.strokeStyle='#b58cff';ctx.beginPath();for(let u=0;u<=1.001;u+=0.01){const xx=x-w/2+u*w;u?ctx.lineTo(xx,f(u)):ctx.moveTo(xx,f(u))}ctx.stroke();ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke();
+  for(let u=0;u<=1;u+=0.1){const xx=x-w/2+u*w;ctx.strokeStyle='rgba(181,140,255,.6)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(xx,f(u));ctx.lineTo(xx,y);ctx.stroke()}ctx.restore();
+  // energy-based motion from top (u=0)
+  const Hm=40,h=u=>Hm*(y-f(u))/hh;const sp=0.18;let u=(t*sp)%1.15;if(u>1)u=0;const hu=h(u),v=Math.sqrt(Math.max(0,2*g*(Hm-hu)));
+  const xx=x-w/2+u*w,yy=f(u);ctx.save();ctx.translate(xx,yy);ctx.fillStyle='#e2557b';rr(-24*s,-26*s,48*s,20*s,6);ctx.fill();ctx.font=`${16*s}px serif`;ctx.textAlign='center';ctx.fillText('😄🤩',0,-30*s);ctx.restore();
+  const m=5000,PE=m*g*hu/1e6,KE=0.5*m*v*v/1e6;tag(xx,yy-50*s,['h = '+hu.toFixed(0)+' m','v = '+v.toFixed(1)+' m/s']);
+  meter(x+w/2+10*s,y,s,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'}],m*g*Hm/1e6);T('(×10⁶ J)',x+w/2+66*s,y+14,16,'#fff')}},
+bow:{img:'archery',name:'🏹 قوس',q:'سُحب وتر القوس 0.50 m بقوة متوسطة 100 N. ما الطاقة المختزنة؟',a:'W = Fd = (100)(0.50) = 50 J تُختزن طاقة وضع مرونية، ثم تصبح طاقة حركية للسهم.',
+ draw(x,y,s){const per=3,k=t%per,pull=k<1.5?Math.min(1,k/1.2):0,fly=k>=1.5?Math.min(1,(k-1.5)/0.6):0;const R=110*s,bx=x-160*s,cy=y-130*s;
+  ctx.strokeStyle='#c98a3c';ctx.lineWidth=7*s;ctx.beginPath();ctx.arc(bx-60*s,cy,R,-0.95,0.95);ctx.stroke();
+  const tx=bx-60*s+R*Math.cos(0.95),ty=R*Math.sin(0.95);const sx=tx-pull*70*s;ctx.strokeStyle='#eee';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(tx,cy-ty);ctx.lineTo(sx,cy);ctx.lineTo(tx,cy+ty);ctx.stroke();
+  const ax=fly?sx+fly*330*s:sx;ctx.strokeStyle='#7a4b1a';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ax,cy);ctx.lineTo(ax+90*s,cy);ctx.stroke();ctx.fillStyle='#555';ctx.beginPath();ctx.moveTo(ax+100*s,cy);ctx.lineTo(ax+86*s,cy-7*s);ctx.lineTo(ax+86*s,cy+7*s);ctx.fill();
+  [['#fff',40],['#2f5fd0',32],['#e2364f',21],['#f2c216',10]].forEach(([c,r])=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(x+290*s,cy,r*s,0,7);ctx.fill()});
+  const PEe=50*pull*(fly?0:1),KE=fly?50:0;tag(bx,cy-R-6*s,['W = Fd = 50 J','PE مرونية = '+PEe.toFixed(0)+' J','KE السهم = '+KE.toFixed(0)+' J']);
+  meter(x+360*s,y,s,[{l:'مرونية',v:PEe,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'}],50)}},
+book:{img:'library',name:'📚 كتاب على رف',q:'رفعتِ كتابًا كتلته 1.2 kg من الأرض إلى رف ارتفاعه 1.80 m. ما شغلكِ؟ وما طاقة وضعه؟',a:'W = mgh = (1.2)(9.80)(1.80) = 21.2 J ، وتُختزن طاقة وضع PE = 21.2 J بالنسبة إلى الأرض.',
+ draw(x,y,s){const Hm=1.8,m=1.2,px=150*s,per=4.2,k=t%per;let h,v=0,ph;
+  if(k<2){h=Hm*(k/2);ph='رفع: شغلكِ يُختزن'}else if(k<3.2){h=Hm;ph='على الرف: طاقة وضع'}else{const tf=k-3.2;h=Math.max(0,Hm-0.5*g*tf*tf);v=h>0?g*tf:0;ph=h>0?'سقوط: PE ← KE':'وصل الأرض'}
+  ctx.fillStyle='rgba(167,123,79,.95)';ctx.fillRect(x-90*s,y-Hm*px,180*s,9*s);T('الرف 1.80 m',x-140*s,y-Hm*px,18,'#ffd56b');
+  shadow(x,y,40*s);ctx.fillStyle='#2f5fd0';rr(x-34*s,y-h*px-26*s,68*s,26*s,4);ctx.fill();ctx.fillStyle='#f4e7c8';ctx.fillRect(x-30*s,y-h*px-6*s,60*s,4*s);
+  const PE=m*g*h,KE=h<Hm&&k>=3.2?0.5*m*v*v:0;tag(x,y-Hm*px-20*s,[ph,'PE = '+PE.toFixed(1)+' J','KE = '+KE.toFixed(1)+' J']);
+  meter(x+110*s,y,s,[{l:'PE',v:PE,c:'#14967f'},{l:'KE',v:KE,c:'#e2557b'}],m*g*Hm)}},
+wheel:{img:'wheel',name:'🎡 عجلة دوّارة',q:'عجلة تدور حول محورها دون أن تنتقل. هل لها طاقة حركية؟ وعلامَ تعتمد؟',a:'نعم، لها طاقة حركية دورانية تعتمد على السرعة الزاوية ω وتوزيع الكتلة حول المحور.',
+ draw(x,y,s){const R=110*s,cy=y-R-30*s,w=2+1.5*Math.sin(t*0.6)+1.5,ang=t*w;
+  ctx.fillStyle='#3f5aa8';rr(x-R*0.9,y-24*s,R*1.8,24*s,6);ctx.fill();
+  ctx.save();ctx.translate(x,cy);ctx.rotate(ang);for(let i=0;i<12;i++){ctx.fillStyle=`hsl(${i*30},80%,70%)`;ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,i*Math.PI/6,(i+1)*Math.PI/6);ctx.fill()}
+  ctx.strokeStyle='#cfd6e6';ctx.lineWidth=8*s;ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.stroke();ctx.fillStyle='#8a94ad';ctx.beginPath();ctx.arc(0,0,14*s,0,7);ctx.fill();ctx.restore();
+  const I=0.5*5*0.16,KE=0.5*I*w*w;tag(x,cy-R-10*s,['طاقة حركية دورانية','ω = '+w.toFixed(1)+' rad/s','KE = '+KE.toFixed(1)+' J']);
+  meter(x+R+30*s,y,s,[{l:'دورانية',v:KE,c:'#e2557b'}],0.5*I*25)}}
+};
+let cur='ball',anchor=null,size=1;
+function setBg(){$('bg').style.backgroundImage=`url(assets/img/${M[cur].img}.jpg)`}
+const chips=$('chips');Object.entries(M).forEach(([k,m])=>{const b=document.createElement('button');b.className='chip'+(k===cur?' on':'');b.innerHTML=`<img src="assets/img/${m.img}.jpg" alt="">${m.name}`;b.onclick=()=>{cur=k;setBg();document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===b));toast('👆 اضغطي على المكان الذي تريدين وضع '+m.name.slice(2)+' فيه')};chips.appendChild(b)});
+/* draggable law tags */
+const LAWS=[{s:'KE = ½mv²',x:.82,y:.30,c:'#e2557b'},{s:'PE = mgh',x:.82,y:.42,c:'#14967f'},{s:'W = ΔKE',x:.82,y:.54,c:'#f2a516'},{s:'E₀ = mc²',x:.82,y:.66,c:'#7b5cd6'}];
+let dragLaw=null;
+function layLaws(){if(innerWidth<innerHeight||innerWidth<700){LAWS.forEach((l,i)=>{l.x=i%2?0.28:0.72;l.y=0.25+0.07*(i>>1)})}else{LAWS.forEach((l,i)=>{l.x=0.12;l.y=0.3+0.12*i})}}layLaws();addEventListener('resize',layLaws);addEventListener('orientationchange',()=>setTimeout(()=>{resize();layLaws()},250));
+function drawLaws(){LAWS.forEach(l=>{const x=l.x*W,y=l.y*H;ctx.save();ctx.font=`700 24px ${F}`;const w=ctx.measureText(l.s).width+28;rr(x-w/2,y-20,w,40,20);ctx.fillStyle=l.c;ctx.globalAlpha=Math.min(1,getA()+.05);ctx.fill();ctx.globalAlpha=1;ctx.direction='ltr';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(l.s,x,y+1);l.w=w;ctx.restore()})}
+cv.addEventListener('pointerdown',e=>{const x=e.clientX,y=e.clientY;dragLaw=LAWS.find(l=>Math.abs(x-l.x*W)<l.w/2&&Math.abs(y-l.y*H)<22);if(!dragLaw){anchor={x:x/W,y:y/H};$('toast').style.opacity=0}});
+cv.addEventListener('pointermove',e=>{if(dragLaw){dragLaw.x=e.clientX/W;dragLaw.y=e.clientY/H}});
+addEventListener('pointerup',()=>dragLaw=null);
+$('size').oninput=e=>size=+e.target.value;
+let lastT=performance.now();
+function loop(n){t+=Math.min(.05,(n-lastT)/1000);lastT=n;ctx.clearRect(0,0,W,H);const s=size*Math.min(1,W/(H>W?700:900),H/650);
+ const a=anchor||(H>W?{x:.42,y:.78}:{x:.48,y:.8});M[cur].draw(a.x*W,a.y*H,s);drawLaws();requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+function toast(s){const el=$('toast');el.textContent=s;el.style.opacity=1;clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity=0,3500)}
+/* camera */
+let facing='environment',stream=null;
+async function cam(){try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1920}},audio:false});vid.srcObject=stream;vid.style.display='block';$('bg').style.display='none';toast('👆 اضغطي على الطاولة أو الأرض لوضع المجسّم')}catch(e){vid.style.display='none';$('bg').style.display='block';setBg();toast('تعذّر تشغيل الكاميرا، نعرض المجسّمات فوق خلفية المختبر')}}
+$('camOn').onclick=()=>{$('start').style.display='none';cam()};
+$('camOff').onclick=()=>{$('start').style.display='none';setBg();vid.style.display='none';toast('👆 اضغطي على أي مكان لوضع المجسّم')};
+$('flip').onclick=()=>{facing=facing==='environment'?'user':'environment';cam()};
+/* teacher data */
+const TK='energyAR.teacher';const tf=['tSchool','tName','tSubject','tClass','tLesson'];
+function loadT(){let d={};try{d=JSON.parse(localStorage.getItem(TK)||'{}')}catch(e){}tf.forEach(k=>{if(d[k]!==undefined)$(k).value=d[k]});badge()}
+function badge(){const v=tf.map(k=>$(k).value.trim());const parts=[v[0],v[1]?('المعلمة: '+v[1]):'',[v[2],v[3]].filter(Boolean).join(' • '),v[4]].filter(Boolean);$('tbadge').innerHTML=parts.join(' • ')||'عدسة مُحوِّلات الطاقة'}
+$('tSave').onclick=()=>{const d={};tf.forEach(k=>d[k]=$(k).value);try{localStorage.setItem(TK,JSON.stringify(d))}catch(e){}badge();close();toast('✓ حُفظت البيانات')};
+loadT();
+/* modals */
+function open(id){$(id).classList.add('show')}function close(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('show'));$('aud').pause()}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)close()});
+$('tBtn').onclick=()=>open('tModal');$('vBtn').onclick=()=>{$('vqa').classList.remove('open');open('vModal')};
+$('qBtn').onclick=()=>{const m=M[cur];$('qBox').innerHTML=`<div><b>${m.name}</b></div><div>${m.q}</div><div class="qa"><button class="btn alt rev" onclick="this.parentNode.classList.add('open')">▶ اضغطي لإظهار الإجابة</button><div class="ans">${m.a}</div></div>`;open('qModal')};
+document.querySelectorAll('[data-audio]').forEach(b=>b.onclick=()=>{const a=$('aud');if(a.dataset.src===b.dataset.audio&&!a.paused){a.pause();b.textContent='▶ استمعي للتلاوة';return}document.querySelectorAll('[data-audio]').forEach(x=>x.textContent='▶ استمعي للتلاوة');a.src=b.dataset.audio;a.dataset.src=b.dataset.audio;a.play().then(()=>b.textContent='⏸ إيقاف').catch(()=>b.textContent='⚠ تحتاج اتصالًا بالإنترنت');a.onended=()=>b.textContent='▶ استمعي للتلاوة'});
+/* snapshot */
+$('snap').onclick=()=>{const c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;const x=c.getContext('2d');
+ const drawBg=src=>{const sw=src.videoWidth||src.naturalWidth,sh=src.videoHeight||src.naturalHeight;const sc=Math.max(c.width/sw,c.height/sh);x.drawImage(src,(c.width-sw*sc)/2,(c.height-sh*sc)/2,sw*sc,sh*sc)};
+ const fin=()=>{x.drawImage(cv,0,0);x.font=`700 ${22*DPR}px ${F}`;x.fillStyle='rgba(31,42,92,.85)';const txt=$('tbadge').innerText.replace(/\n/g,'  •  ');const w=x.measureText(txt).width+30*DPR;x.fillRect(c.width-w-10*DPR,c.height-46*DPR,w,36*DPR);x.fillStyle='#fff';x.textAlign='right';x.textBaseline='middle';x.fillText(txt,c.width-25*DPR,c.height-28*DPR);
+  const a=document.createElement('a');a.download='الواقع-المعزز-الطاقة.png';a.href=c.toDataURL('image/png');a.click();toast('📸 حُفظت الصورة')};
+ if(vid.style.display==='block'&&vid.videoWidth){drawBg(vid);fin()}else{const im=new Image();im.onload=()=>{drawBg(im);fin()};im.src=`assets/img/${M[cur].img}.jpg`}};
+document.documentElement.style.setProperty('--a',.62);
+$('alpha').oninput=e=>document.documentElement.style.setProperty('--a',e.target.value);
+$('fs').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
+</script>
+</body>
+</html>
