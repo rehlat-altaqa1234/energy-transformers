@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-s="start">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>تحدّي الجهاز الهضمي</title>
@@ -121,6 +121,22 @@ canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:20}
  #wc{width:min(80dvh,360px)}textarea{height:90px}.picked{font-size:24px;min-height:34px}
  #end .box{margin:4dvh auto;padding:18px}#end h1{font-size:28px}
 }
+
+/* ===== keep text boxes off the girl ===== */
+@media(orientation:landscape) and (min-width:700px){
+ #game .top{width:50vw;margin:12px 1.5vw 0 auto;flex-wrap:wrap;gap:8px}
+ #game .top h2{font-size:19px}
+ #game .board{width:50vw;max-width:none;margin:0 1.5vw 0 auto;padding:14px 0}
+ .modal{justify-content:flex-start;padding-inline-start:1.5vw;background:rgba(90,36,72,.10)}
+ .card{width:min(860px,50vw)}
+ #end .box.cert{width:50vw;max-width:none;margin:3vh 1.5vw 0 auto}
+}
+@media(orientation:portrait){
+ html[data-s="start"]::before{background-size:auto 56vh;background-position:12% top;background-color:#F3D3E2}
+ html[data-s="start"]::after{content:'';position:fixed;left:0;right:0;top:48vh;height:9vh;z-index:-1;background:linear-gradient(rgba(243,211,226,0),#F3D3E2)}
+ html:not([data-s="start"])::before{background-position:88% center}
+ .hero{max-height:43vh;overflow:auto}
+}
 </style>
 </head>
 <body>
@@ -185,7 +201,7 @@ const PTS=[100,200,300,400];
 let pname='',score=0,answered=0,correct=0,cur=null,timer=null,left=30,prev='start';
 const MAX=CATS.length*PTS.reduce((a,b)=>a+b,0),TOTAL=CATS.length*PTS.length;
 const $=id=>document.getElementById(id);
-function show(id){const c=document.querySelector('.screen.on');if(c&&id!==c.id)prev=c.id;document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');if(id==='wheel')drawWheel();scrollTo(0,0)}
+function show(id){document.documentElement.dataset.s=id;const c=document.querySelector('.screen.on');if(c&&id!==c.id)prev=c.id;document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');if(id==='wheel')drawWheel();scrollTo(0,0)}
 function back(){show(prev==='wheel'?'start':prev)}
 function startGame(){pname=$('pname').value.trim();if(!pname){$('pname').focus();$('pname').style.borderColor='#C0392B';$('pname').placeholder='اكتبي اسمك أولًا ✍';return}
  $('L0').textContent=pname;score=0;answered=0;correct=0;
@@ -211,7 +227,7 @@ async function drawCert(){try{await document.fonts.load('700 40px Almarai');awai
  for(const im of Object.values(IMG))if(!im.complete)await new Promise(r=>{im.onload=im.onerror=r});
  const c=$('cert'),x=c.getContext('2d'),W=1600,H=1131;x.clearRect(0,0,W,H);
  // background image cover + wash
- const iw=IMG.bg.naturalWidth||1672,ih=IMG.bg.naturalHeight||941,sc=Math.max(W/iw,H/ih);x.drawImage(IMG.bg,(W-iw*sc)/2,(H-ih*sc)/2,iw*sc,ih*sc);
+ const IW=IMG.bg.naturalWidth||1672,ih=IMG.bg.naturalHeight||941,sx=IW*.47,iw=IW-sx,sc=Math.max(W/iw,H/ih);x.drawImage(IMG.bg,sx,0,iw,ih,(W-iw*sc)/2,(H-ih*sc)/2,iw*sc,ih*sc);
  x.fillStyle='rgba(255,247,250,.80)';x.fillRect(0,0,W,H);
  // frames
  const rr=(X,Y,w,h,r)=>{x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath()};
