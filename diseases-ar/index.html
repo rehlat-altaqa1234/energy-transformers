@@ -81,7 +81,7 @@ html,body{height:100%;overflow:hidden;font-family:A,sans-serif;background:#1c103
   <button class="pill" id="qBtn">❓ سؤال</button>
   <button class="pill" id="vBtn">📖 آيات</button>
   <button class="pill" id="mute">🔊</button><button class="pill" id="snap">📸</button>
-  <button class="pill" id="flip">🔄</button>
+  <button class="pill" id="camBtn">📷</button><button class="pill" id="flip">🔄</button>
   <button class="pill" id="fs">⛶</button>
 </div>
 <div class="side">حجم<input type="range" id="size" min="0.5" max="1.8" step="0.05" value="1">🔍</div>
@@ -108,6 +108,10 @@ html,body{height:100%;overflow:hidden;font-family:A,sans-serif;background:#1c103
   <div style="font-size:13px;color:#8a7aa8;text-align:center">بصوت الشيخ مشاري العفاسي • تحتاج التلاوة اتصالًا بالإنترنت</div>
   <div class="qa"><b>ما الربط بدرسنا؟</b><br><button class="btn alt rev" onclick="this.parentNode.classList.add('open')">▶ اضغطي لإظهار الإجابة</button>
   <div class="ans">الشفاء من الله سبحانه، ونأخذ بالأسباب: نزور الطبيب ونتداوى، ونحمي أنفسنا وغيرنا من العدوى بغسل اليدين وتغطية الفم عند العطاس والتطعيم، فلا نعرّض أنفسنا للضرر.</div></div>
+</div></div>
+<div class="modal" id="camBox"><div class="box" style="text-align:center"><button class="x" data-close>✕</button>
+  <div style="font-size:54px">📷</div><h2>السماح باستخدام الكاميرا</h2><p id="camMsg" style="font-size:16px;line-height:1.9"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px"><button class="btn" id="camGo">📷 تشغيل الكاميرا</button><button class="btn alt" id="camCopy">🔗 نسخ الرابط</button><button class="btn alt" data-close>🖼 المتابعة بدون كاميرا</button></div>
 </div></div>
 <audio id="aud"></audio>
 
@@ -266,7 +270,14 @@ function loop(now){const t=(now-t0)/1000;ctx.clearRect(0,0,W,H);const a=anchor||
 requestAnimationFrame(loop);
 /* camera */
 let facing='environment',stream=null;
-async function cam(){try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});vid.srcObject=stream;vid.style.display='block';$('bg').style.display='none'}catch(e){toast('⚠️ تعذّر تشغيل الكاميرا، نعرض خلفية بديلة');vid.style.display='none';$('bg').style.display='block'}}
+const INAPP=/FBAN|FBAV|Instagram|WhatsApp|Snapchat|Line\/|TikTok|Twitter|; wv\)/i.test(navigator.userAgent);
+function camUI(mode){const b=$('camBox');if(!mode){b.classList.remove('on');return}
+  $('camMsg').innerHTML=mode==='inapp'?'يبدو أنك فتحتِ الرابط من داخل تطبيق (واتساب أو غيره) وهو لا يسمح بالكاميرا.<br><b>اضغطي ⋮ أو مشاركة ← «فتح في المتصفح» (Chrome أو Safari)</b>، أو انسخي الرابط وافتحيه في المتصفح.'
+   :mode==='denied'?'رُفض إذن الكاميرا. اضغطي على 🔒 بجانب الرابط في أعلى المتصفح ← «الكاميرا» ← «السماح»، ثم اضغطي الزر.':'اضغطي الزر ثم اختاري <b>«السماح»</b> عندما يطلب المتصفح استخدام الكاميرا.';
+  $('camGo').style.display=mode==='inapp'?'none':'inline-block';b.classList.add('on')}
+async function cam(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){camUI('inapp');return}
+  try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing}},audio:false});vid.srcObject=stream;await vid.play().catch(()=>{});vid.style.display='block';$('bg').style.display='none';camUI(null)}
+  catch(e){vid.style.display='none';$('bg').style.display='block';camUI(INAPP?'inapp':(e&&e.name==='NotAllowedError'?'denied':'ask'))}}
 $('camOn').onclick=()=>{$('start').style.display='none';cam();pick(0);setTimeout(()=>toast('👆 اضغطي على أي مكان لوضع المجسّم فيه'),400)};
 $('camOff').onclick=()=>{$('start').style.display='none';pick(0);toast('👆 اضغطي على أي مكان لوضع المجسّم فيه')};
 $('flip').onclick=()=>{facing=facing==='environment'?'user':'environment';if(stream)cam();else toast('شغّلي الكاميرا أولًا')};
@@ -287,6 +298,9 @@ function openQ(){const m=M[cur],[q,ops,ans,why]=m.q;const order=ops.map((o,i)=>i
     if(ok){done=true;snd('correct');addScore(2);box.querySelector('.why').style.display='block'}else{snd('wrong',.6)}});
   $('qModal').classList.add('on')}
 $('qBtn').onclick=openQ;
+$('camBtn').onclick=()=>cam();
+$('camGo').onclick=()=>cam();$('camCopy').onclick=()=>{const u=location.href;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast('✅ نُسخ الرابط، الصقيه في المتصفح')).catch(()=>prompt('انسخي الرابط:',u))};
+$('cam2')&&0;
 $('mute').onclick=()=>{muted=!muted;$('mute').textContent=muted?'🔇':'🔊';if(master)master.gain.value=muted?0:.8};
 pick(0);cam();setTimeout(()=>toast('👆 اضغطي على أي مكان لوضع المجسّم فيه'),600);
 </script>
