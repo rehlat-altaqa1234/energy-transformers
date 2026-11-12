@@ -63,6 +63,9 @@ svg.nolabels .lb{display:none}
 input[type=range].big{width:100%;accent-color:var(--bronze)}
 #toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);opacity:0;z-index:41;border-radius:18px;padding:14px 22px;font-weight:700;font-size:18px;transition:all .3s;pointer-events:none;text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#eye{position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:12;display:none;font-family:inherit;font-weight:700;font-size:15px;border:0;border-radius:999px;padding:10px 16px;background:rgba(30,53,87,.85);color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.3);cursor:pointer}
+body.clean #top,body.clean #info,body.clean #bot{display:none!important}
+body.clean.live #eye{display:block}
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:40;transition:opacity .25s}
 @media(orientation:portrait){#intro{justify-content:center;align-items:flex-end;padding:3vw}#intro .card{max-height:44vh;overflow:auto;padding:16px}html::before{background-size:auto 54vh;background-position:8% top;background-color:#F3E6D2}html::after{content:'';position:fixed;left:0;right:0;top:46vh;height:9vh;z-index:-1;background:linear-gradient(rgba(243,230,210,0),#F3E6D2)}body.live::after{display:none}}
 @media(max-width:600px){#top h2{font-size:14px;flex-basis:100%;text-align:center}.tabs{width:100%;justify-content:center}#bot{gap:6px;padding:6px 8px}#bot input[type=range]{width:80px}#bot label{font-size:12px}#info{padding:10px 12px;bottom:calc(max(8px,env(safe-area-inset-bottom)) + 96px)}#info p{font-size:13.5px}#intro h1{font-size:23px}}
@@ -87,11 +90,13 @@ input[type=range].big{width:100%;accent-color:var(--bronze)}
 <div id="bot" class="glass" style="display:none">
  <label>📏 الحجم <input type="range" id="sz" min="40" max="300" value="100"></label>
  <label>🌫 الشفافية <input type="range" id="op" min="20" max="100" value="95"></label>
+ <button class="btn gold sm" onclick="toggleClean()">👁 إخفاء الكتابة</button>
  <button class="btn ghost sm" id="lblBtn" onclick="toggleLabels()">🏷 الأسماء</button>
  <button class="btn ghost sm" id="lockBtn" onclick="toggleLock()">🔓 تثبيت</button>
  <button class="btn ghost sm" id="flipBtn" onclick="flipCam()">🔄</button>
  <button class="btn bronze sm" onclick="snap()">📸 صورة</button>
 </div>
+<button id="eye" onclick="toggleClean()">👁 إظهار الكتابة</button>
 <div id="flash"></div><div id="toast" class="glass sh"></div><a id="dl" download="الآلات_البسيطة_واقع_معزز.png" style="display:none"></a>
 <script>
 const $=id=>document.getElementById(id);
@@ -185,7 +190,7 @@ async function start(f){$('err').textContent='';facing=f;
 async function openCam(f){if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:f},width:{ideal:1280},height:{ideal:720}},audio:false});
  const v=$('cam');v.srcObject=stream;v.style.display='';$('nocam').style.display='none';$('flipBtn').style.display='';await v.play().catch(()=>{})}
 async function flipCam(){if(!facing)return;const f=facing==='user'?'environment':'user';try{await openCam(f);facing=f;mirror=f==='user';$('cam').classList.toggle('mirror',mirror)}catch(e){toast('تعذّر تبديل الكاميرا')}}
-function exitAR(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;document.body.classList.remove('live');$('intro').style.display='';['top','bot','info'].forEach(i=>$(i).style.display='none')}
+function exitAR(){document.body.classList.remove('clean');if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;document.body.classList.remove('live');$('intro').style.display='';['top','bot','info'].forEach(i=>$(i).style.display='none')}
 const P=new Map();let g0=null,moved=false;
 $('stage').addEventListener('pointerdown',e=>{P.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=false;snapG()});
 addEventListener('pointermove',e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:e.clientX,y:e.clientY});if(locked||!g0)return;const pts=[...P.values()];
@@ -196,6 +201,7 @@ function up(e){P.delete(e.pointerId);snapG();setTimeout(()=>moved=false,0)}
 addEventListener('pointerup',up);addEventListener('pointercancel',up);
 $('stage').addEventListener('wheel',e=>{e.preventDefault();if(locked)return;sc=Math.max(.4,Math.min(3,sc*(e.deltaY<0?1.08:.93)));render()},{passive:false});
 $('sz').oninput=e=>{sc=e.target.value/100;render()};$('op').oninput=e=>$('ov').style.opacity=e.target.value/100;
+function toggleClean(){document.body.classList.toggle('clean');requestAnimationFrame(fit)}
 function toggleLabels(){$('svg').classList.toggle('nolabels')}
 function toggleLock(){locked=!locked;$('lockBtn').textContent=locked?'🔒 مثبّت':'🔓 تثبيت'}
 function toast(t,ms=1300){const el=$('toast');el.innerHTML=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),ms)}
